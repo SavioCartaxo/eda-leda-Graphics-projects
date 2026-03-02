@@ -1,4 +1,4 @@
-package algoritmos;
+package main.java.algoritmos;
 // Nesta classe está implementada a versão em Java do algoritmo de Kosaraju
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 public class Kosaraju {
     
-	public int Kosaraju(ArrayList<Node> grafo) {
+	public int kosaraju(ArrayList<Node> grafo) {
 		Deque<Node> pilha = new ArrayDeque<>();
 		HashSet<Integer> visitados = new HashSet<>();
 

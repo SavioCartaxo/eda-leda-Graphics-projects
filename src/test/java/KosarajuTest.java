@@ -3,6 +3,7 @@ package test.java;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import main.java.algoritmos.Kosaraju;
 import main.java.algoritmos.Node;
 
 public class KosarajuTest {
@@ -11,8 +12,10 @@ public class KosarajuTest {
 
         ArrayList<Node> grafo = InputFormatter.format(sc);
 
-        // kosaraju(grafo);
+        Kosaraju kosaraju = new Kosaraju();
+        int qtdSCC = kosaraju.kosaraju(grafo);
 
+        System.out.println("Quantidade de SCC's: " + qtdSCC);
         System.out.println(grafo.toString());
     }
 }
