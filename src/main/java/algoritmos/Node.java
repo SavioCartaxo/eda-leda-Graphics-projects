@@ -49,5 +49,26 @@ public class Node {
     public void addConnections(Node newConnection){
         this.connections.add(newConnection);
     }
+
+    /**
+     * Retorna uma representação textual do nó.
+     * 
+     * O formato da string é:
+     * valor -> v1 v2 v3 ...
+     * 
+     * @return Uma string contendo o valor do nó seguido pelos valores 
+     * dos nós aos quais ele está conectado.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(value).append(" -> ");
+
+        for (Node node : connections) {
+            sb.append(node.getValue()).append(" ");
+        }
+
+        return sb.toString();
+    }
 }
 
