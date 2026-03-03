@@ -13,7 +13,7 @@ public class KosarajuTest {
         ArrayList<Node> grafo = InputFormatter.format(sc);
 
         Kosaraju kosaraju = new Kosaraju();
-        int qtdSCC = kosaraju.kosaraju(grafo);
+        int qtdSCC = kosaraju.contadorSCC(grafo);
 
         System.out.println("Quantidade de SCC's: " + qtdSCC);
         System.out.println(grafo.toString());

@@ -1,27 +1,55 @@
 package main.java.algoritmos;
-// Nesta classe está implementada a versão em Java do algoritmo de Kosaraju
 
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.ArrayDeque;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.HashSet;
 
+/**
+ * Implementação do algoritmo de Kosaraju para encontrar
+ * o número de Componentes Fortemente Conectadas (SCC)
+ * em um grafo direcionado.
+ *
+ * O algoritmo é executado em três etapas:
+ *
+ * 1) Realiza uma busca em profundidade (DFS) no grafo original,
+ *    armazenando os vértices em uma pilha conforme o tempo de término.
+ *
+ * 2) Constrói o grafo transposto, invertendo todas as arestas.
+ *
+ * 3) Executa DFS no grafo transposto, seguindo a ordem definida
+ *    pela pilha, identificando e contando as componentes fortemente conectadas.
+ *
+ * Complexidade:
+ * Tempo  -> O(V + E)
+ * Espaço -> O(V + E)
+ */
 public class Kosaraju {
     
-	public int kosaraju(ArrayList<Node> grafo) {
-		Deque<Node> pilha = new ArrayDeque<>();
-		HashSet<Integer> visitados = new HashSet<>();
+	/**
+     * Executa o algoritmo de Kosaraju em um grafo direcionado.
+     *
+     * @param grafo lista de nós representando o grafo (lista de adjacência)
+     * @return número de Componentes Fortemente Conectadas (SCCs)
+     */
+	public int contadorSCC(List<Node> grafo) {
 
-		// parte 1: percorrer o grafo e adicionar na pilha
-		for (Node node : grafo) {
-			if (!visitados.contains(node.getValue())) {
-				dfs1(node, pilha, visitados);
+		Deque<Node> pilha = new ArrayDeque<>();
+		Set<Integer> visitados = new HashSet<>();
+
+		// Parte 1: DFS no grafo original
+		for (Node no : grafo) {
+			if (!visitados.contains(no.getValue())) {
+				dfs1(no, pilha, visitados);
 			}
 		}
 
-		// parte 2: inverter o grafo
-		HashMap<Integer, ArrayList<Node>> grafoInvertido = new HashMap<>();
+		// Parte 2: Construção do grafo transposto
+		Map<Integer, ArrayList<Node>> grafoInvertido = new HashMap<>();
 
 		for (Node node : grafo) {
 			grafoInvertido.put(node.getValue(), new ArrayList<>());	
@@ -33,8 +61,8 @@ public class Kosaraju {
 			}
 		}
 
-		// parte 3: dfs no grafo transposto
-		HashSet<Integer> visitados2 = new HashSet<>();
+		// Parte 3: DFS no grafo transposto
+		Set<Integer> visitados2 = new HashSet<>();
 		int contadorSCC = 0;
 
 		while (!pilha.isEmpty()) {
@@ -49,7 +77,11 @@ public class Kosaraju {
 		return contadorSCC;
 	}
 
-	private void dfs1(Node node, Deque<Node> pilha, HashSet<Integer> visitados) {
+	/**
+     * DFS do grafo original para preencher a pilha
+     * de acordo com o tempo de término.
+     */
+	private void dfs1(Node node, Deque<Node> pilha, Set<Integer> visitados) {
 		visitados.add(node.getValue());
 
 		for (Node vizinho : node.getConnections()) {
@@ -61,12 +93,16 @@ public class Kosaraju {
 		pilha.addLast(node);
 	}
 
-	private void dfs2(Node node, HashMap<Integer, ArrayList<Node>> grafoInvertido, HashSet<Integer> visitados2) {
-		visitados2.add(node.getValue());
+	/**
+     * DFS no grafo transposto para visitar todos
+     * os nós de uma mesma SCC.
+     */
+	private void dfs2(Node node, Map<Integer, ArrayList<Node>> grafoInvertido, Set<Integer> visitados) {
+		visitados.add(node.getValue());
 
 		for (Node vizinho : grafoInvertido.get(node.getValue())) {
-			if (!visitados2.contains(vizinho.getValue())) {
-				dfs2(vizinho, grafoInvertido, visitados2);
+			if (!visitados.contains(vizinho.getValue())) {
+				dfs2(vizinho, grafoInvertido, visitados);
 			}
 		}
 	}
