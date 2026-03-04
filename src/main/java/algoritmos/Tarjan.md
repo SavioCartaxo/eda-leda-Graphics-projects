@@ -27,8 +27,85 @@ Intuição Final
 
 Podemos interpretar o algoritmo da seguinte forma: id indica quando entramos em um vértice, low indica quão longe conseguimos voltar na exploração, e a pilha representa os vértices ainda ativos na DFS. Quando não é mais possível voltar para vértices anteriores, uma região do grafo se fecha e uma SCC é identificada. Dessa maneira, o algoritmo de Tarjan encontra todas as componentes fortemente conectadas em uma única passagem pelo grafo, de forma eficiente e elegante.
 
+
 Vamos tomar como exemplo o seguinte grafo:
 
 ![Grafo](../../../../README_IMAGES/GraphTarjan.png)
 
-Inicialente criamos a lista de ids(é importante entender que o id de um nó não é seu valor mas sim o momento em que um node foi visitado durante a execução da dfs) com tamanho igual a quantidade de vértices do grafo e iniciamos todas as posições como -1, o que representa que o vértice ainda não foi visitado, assim para cada índice representando um node, o array id é igual a [-1, -1, -1, -1, -1],também criamos antes da DFS um array de tamanho igual ao de ids chamado low, que guardará o llk de cada Node, no começo estará apenas com zeros, no nosso caso estaria igual a [0, 0, 0, 0, 0], para facilitar o entendimento consideraremos os arrays como 1-based, criaremos também uma variável responsável por agir como um "relógio", que seria o id, a cada node visitado esse valor será incrementado, estando diretamente relacionado ao momento que visitamos o node, de início essa variável começará como 0, ao decorrer da execução ficará mais claro seu objetivo, agora podemos começar a chamada da DFS, passando por todos os nodes, caso seu valor em ids esteja == -1, isso nos diz que o node ainda não foi visitado, assim chamamos DFS para esse node, no nosso caso, começaremos a interar a partir do node 1, e de início seu valor em ids é -1, assim chamamos DFS(1)
+Com as arestas: 3→1, 1→2, 2→1.
+
+---
+
+## Estruturas auxiliares
+
+Antes de iniciar a DFS, criamos as seguintes estruturas:
+
+**ids**: array de tamanho igual ao número de vértices, iniciado com -1. O valor de ids[v] não representa o valor do node, mas sim o momento em que ele foi visitado durante a DFS. Enquanto ids[v] == -1, o node ainda não foi visitado.
+
+**low**: array de mesmo tamanho, iniciado com 0. Guarda o menor ids acessível a partir de cada node, considerando os nós ainda na stack. É através do low que conseguimos identificar a raiz de um SCC.
+
+**id**: variável que age como um "relógio", incrementada a cada novo node visitado, determinando a ordem de visita.
+
+**stack**: array que funciona como pilha, armazenando os nodes visitados ainda não atribuídos a algum SCC.
+
+**onStack**: array booleano que nos diz, em O(1), se um node está atualmente na stack. Essencial para a atualização correta do low.
+
+Estado inicial:
+
+```
+ids     = [-1, -1, -1]
+low     = [ 0,  0,  0]
+stack   = [ 0,  0,  0]
+onStack = [false, false, false]
+id = 0
+```
+
+---
+
+## Execução
+
+Iteramos pelos nodes. O node 1 tem ids[1] == -1, chamamos DFS(1), atribuímos ids[1] = low[1] = 0, incrementamos id e adicionamos à stack:
+
+```
+ids     = [0, -1, -1]  |  low = [0, 0, 0]  |  id = 1
+stack   = [1,  0,  0]  |  onStack = [true, false, false]
+```
+
+Node 1 tem vizinho 2, não visitado, chamamos DFS(2), atribuímos ids[2] = low[2] = 1, incrementamos id e adicionamos à stack:
+
+```
+ids     = [0, 1, -1]  |  low = [0, 1, 0]  |  id = 2
+stack   = [1, 2,  0]  |  onStack = [true, true, false]
+```
+
+Node 2 tem vizinho 1, já visitado e na stack, então atualizamos low[2] = min(low[2], ids[1]) = min(1, 0) = 0:
+
+```
+ids     = [0, 1, -1]  |  low = [0, 0, 0]  |  id = 2
+stack   = [1, 2,  0]  |  onStack = [true, true, false]
+```
+
+DFS(2) retorna. ids[2]=1 != low[2]=0, node 2 não é raiz de SCC. Voltando ao node 1, propagamos low[1] = min(low[1], low[2]) = min(0, 0) = 0. Node 1 não tem mais vizinhos. ids[1] == low[1]? 0 == 0, sim! Desempilhamos até o node 1, formando o primeiro SCC: **{2, 1}**:
+
+```
+ids     = [0, 1, -1]  |  low = [0, 0, 0]  |  id = 2
+stack   = [0, 0,  0]  |  onStack = [false, false, false]
+```
+
+Continuamos a iteração. O node 3 tem ids[3] == -1, chamamos DFS(3), atribuímos ids[3] = low[3] = 2, incrementamos id e adicionamos à stack:
+
+```
+ids     = [0, 1, 2]  |  low = [0, 0, 2]  |  id = 3
+stack   = [3, 0, 0]  |  onStack = [false, false, true]
+```
+
+Node 3 tem vizinho 1, já visitado mas **fora da stack** (onStack[1] == false), portanto não atualizamos o low. DFS(3) retorna. ids[3] == low[3]? 2 == 2, sim! Desempilhamos formando o segundo SCC: **{3}**:
+
+```
+ids     = [0, 1, 2]  |  low = [0, 0, 2]  |  id = 3
+stack   = [0, 0, 0]  |  onStack = [false, false, false]
+```
+
+Todos os nodes foram visitados. SCCs encontrados: **{1, 2}** e **{3}**.
+
+O node 3 forma um SCC sozinho pois, apesar de alcançar o node 1, não há caminho de volta até ele, ou seja, não há ciclo envolvendo o node 3.
