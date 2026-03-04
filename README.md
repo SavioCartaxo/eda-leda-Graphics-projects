@@ -15,7 +15,10 @@ Essas vias podem ser representadas diagramicamente por pontos ligados entre linh
 ![Graph Diagram](README_IMAGES/graph.png)
 
 
-O grafo na figura 1.1 pode, além de um mapa de estradas, representar diversas coisas: uma rede elétrica, moléculas ou redes neurais, essencialmente, portanto, um  grafo é uma representação de um conjunto de pontos e as ligações entre eles. Na computação são extremamente uteis para lidar com problemas relacionados a rede de computadores com conexões via WI-FI ou cabo entre roteadores, rede sociais e a conexão de usuários que seguem um ao outro, ou até a internet com páginas da web conectadas através de um click. 
+O grafo na figura 1.1 pode, além de um mapa de estradas, representar diversas coisas: uma rede elétrica, moléculas ou redes neurais, essencialmente, portanto, um  grafo é uma representação de um conjunto de pontos e as ligações entre eles. Na computação são extremamente uteis para lidar com problemas relacionados a rede de computadores com conexões via WI-FI ou cabo entre roteadores, rede sociais e a conexão de usuários que seguem um ao outro, ou até a internet com páginas da web conectadas através de um link.
+
+
+ 
 
 
 
