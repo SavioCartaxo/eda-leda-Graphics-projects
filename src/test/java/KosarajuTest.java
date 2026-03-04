@@ -33,10 +33,11 @@ public class KosarajuTest {
         Kosaraju kosaraju = new Kosaraju();
 
         long startTime = System.currentTimeMillis(); // tempo inicial
-        int qtdSCC = kosaraju.contadorSCC(grafo);
+        ArrayList<ArrayList<Integer>> SCCs = kosaraju.findSCCs(grafo);
         long endTime = System.currentTimeMillis();   // tempo final
 
-        System.out.println("Quantidade de SCC's: " + qtdSCC);
+        System.out.println("SCC's: " + SCCs);
+        System.out.println("Quantidade de SCC's: " + SCCs.size());
         System.out.println("Tempo de execução: " + (endTime - startTime) + " ms");
         
     }

@@ -1,5 +1,6 @@
 package main.java.algoritmos;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.List;
@@ -34,9 +35,9 @@ public class Kosaraju {
      * Executa o algoritmo de Kosaraju em um grafo direcionado.
      *
      * @param grafo lista de nós representando o grafo (lista de adjacência)
-     * @return número de Componentes Fortemente Conectadas (SCCs)
+     * @return os Componentes Fortemente Conectados (SCCs)
      */
-	public int contadorSCC(List<Node> grafo) {
+	public ArrayList<ArrayList<Integer>> findSCCs(List<Node> grafo) {
 
 		Deque<Node> pilha = new ArrayDeque<>();
 		Set<Integer> visitados = new HashSet<>();
@@ -63,18 +64,22 @@ public class Kosaraju {
 
 		// Parte 3: DFS no grafo transposto
 		Set<Integer> visitados2 = new HashSet<>();
-		int contadorSCC = 0;
+		ArrayList<ArrayList<Integer>> SCCs = new ArrayList<>();
 
 		while (!pilha.isEmpty()) {
 			Node node = pilha.removeLast();
 
 			if (!visitados2.contains(node.getValue())) {
-				contadorSCC++;
-				dfs2(node, grafoInvertido, visitados2);
+				ArrayList<Integer> scc = new ArrayList<>();
+				dfs2(node, grafoInvertido, visitados2, scc);
+				Collections.sort(scc);
+				SCCs.add(scc);
 			}
 		}
 
-		return contadorSCC;
+		// Ordena os SCCs pelo menor elemento de cada componente
+		Collections.sort(SCCs, (a, b) -> a.get(0) - b.get(0));
+		return SCCs;
 	}
 
 	/**
@@ -97,12 +102,13 @@ public class Kosaraju {
      * DFS no grafo transposto para visitar todos
      * os nós de uma mesma SCC.
      */
-	private void dfs2(Node node, Map<Integer, ArrayList<Node>> grafoInvertido, Set<Integer> visitados) {
+	private void dfs2(Node node, Map<Integer, ArrayList<Node>> grafoInvertido, Set<Integer> visitados, ArrayList<Integer> scc) {
 		visitados.add(node.getValue());
+		scc.add(node.getValue());
 
 		for (Node vizinho : grafoInvertido.get(node.getValue())) {
 			if (!visitados.contains(vizinho.getValue())) {
-				dfs2(vizinho, grafoInvertido, visitados);
+				dfs2(vizinho, grafoInvertido, visitados, scc);
 			}
 		}
 	}
