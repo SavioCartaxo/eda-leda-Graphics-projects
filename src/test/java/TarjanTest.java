@@ -10,7 +10,7 @@ import main.java.algoritmos.Tarjan;
  Para testar o algoritmo, execute os seguintes comandos na raiz do projeto:
 
  1) Gerar o arquivo de entrada (exemplo para N = 100 e K = 100):
-    python scripts/scripty_cycle_graph.py 100 100 > input.txt
+    python scripts/script_cycle_graph.py 100 100 > input.txt
 
  2) Compilar as classes:
     javac -d out src/main/java/algoritmos/*.java src/test/java/*.java
@@ -18,7 +18,7 @@ import main.java.algoritmos.Tarjan;
  3) Executar o teste:
 
     • No PowerShell (Windows):
-      Get-Content input.txt | java -cp out test.java.TarjanTest
+      Get-Content input.txt | java -Xss512m -cp out test.java.TarjanTest
 
     • No Linux ou MacOS:
       java -cp out test.java.TarjanTest < input.txt
@@ -30,7 +30,6 @@ public class TarjanTest {
         ArrayList<Node> grafo = InputFormatter.format(sc);
 
         Tarjan tj = new Tarjan();
-
         long startTime = System.currentTimeMillis(); // tempo inicial
         int count = tj.scc(grafo).size();
         long endTime = System.currentTimeMillis();   // tempo final

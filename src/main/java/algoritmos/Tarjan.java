@@ -26,10 +26,12 @@ public class Tarjan {
     private int[] indexToValue;             // índice → valor original do nó
     private ArrayList<ArrayList<Integer>> out;
 
+    
+
     public ArrayList<ArrayList<Integer>> scc(ArrayList<Node> graph) {
         final int n = graph.size();
 
-        // Mapeia valores arbitrários dos nós para índices contíguos
+         // Mapeia valores arbitrários dos nós para índices contíguos
         nodeIndex = new HashMap<>(n * 2);
         indexToValue = new int[n];
         for (int i = 0; i < n; i++) {
