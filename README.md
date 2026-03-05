@@ -121,7 +121,7 @@ Vamos usar o grafo direcionado abaixo como exemplo para executar o algoritmo de 
 ## Execução do Algortimo
 ### Primeira Etapa
 
-Qual o nosso objetivo inicial? primeiro, devemos criar uma pilha que representa a ordem de saída dos vértices através de uma busca em profundidade e guardamos os vértices já visitados. A DFS faz chamadas recursivas para cada vizinho não visitado, e ao retornar de todas essas chamadas — ou seja, quando não há mais vizinhos a explorar — o vértice é adicionado à pilha. 
+Qual o nosso objetivo inicial? primeiro, devemos criar uma pilha que representa a ordem de saída dos vértices através de uma busca em profundidade e guardamos os vértices já visitados. A versão da DFS usada para a explicação do algoritmo será a recursiva, pois ela é mais intuitiva e simples de entender. A DFS faz chamadas recursivas para cada vizinho não visitado, e ao retornar de todas essas chamadas — ou seja, quando não há mais vizinhos a explorar — o vértice é adicionado à pilha. 
 
 Podemos começar a DFS por qualquer vértice, mas por convenção iremos utilizar o 1. Realizando a busca, visitamos o 1 e vemos a quem ele esta ligado. Vemos que ele está ligado ao 2, então visitamos o 2, e vemos que ele está ligado ao 3, visitamos o 3. Como o 3 não tem mais vizinhos não visitados, ele é adicionado à pilha. A recursão retorna para o 2, que também não tem mais vizinhos, e é adicionado. Por fim o 1 é adicionado. 
 
