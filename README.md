@@ -5,8 +5,8 @@
 - [O que é um grafo?](#o-que-é-um-grafo)
 - [DFS](#depth-first-search)
 - [Componentes Fortemente Conectados](#componentes-fortemente-conectados)
-- [Kosaraju]()
-- [Tarjan](#algoritmo-de-tarjan--componentes-fortemente-conectados-scc)
+- [Kosaraju](#algoritmo-de-kosaraju)
+- [Tarjan](#algoritmo-de-tarjan)
 
 ## Versionamento de código
 
@@ -70,8 +70,10 @@ No entanto, um grafo dirigido pode não ser fortemente conectado como um todo. N
 </figure>
 
 ---
+# Algoritmo de Kosaraju
 
-# Algoritmo de Tarjan — Componentes Fortemente Conectados (SCC)
+---
+# Algoritmo de Tarjan
 ## Visão Geral
 
 Dado um grafo direcionado, queremos identificar quais conjuntos de vértices estão conectados de forma que todos conseguem alcançar todos os outros. O algoritmo de Tarjan resolve esse problema encontrando todas as Componentes Fortemente Conectadas (SCCs) utilizando apenas uma busca em profundidade (DFS), com complexidade linear O(V + E). A ideia central é detectar, durante a própria DFS, quando um grupo de vértices forma um ciclo fechado, sem precisar realizar múltiplas passagens pelo grafo.
@@ -182,3 +184,12 @@ stack   = [0, 0, 0]  |  onStack = [false, false, false]
 Todos os nodes foram visitados. SCCs encontrados: **{1, 2}** e **{3}**.
 
 O node 3 forma um SCC sozinho pois, apesar de alcançar o node 1, não há caminho de volta até ele, ou seja, não há ciclo envolvendo o node 3.
+
+---
+# Contribuintes
+- [@KalebeSouza-dev - Kalebe Souza](https://github.com/KalebeSouza-dev)
+- [@00joaoguilherme - Joao Guilherme](https://github.com/00joaoguilherme)
+- [@2004gustavoPaiva - Luis Gustavo](https://github.com/2004gustavoPaiva)
+- [@RenanAF18 - Savio Renan](https://github.com/RenanAF18)
+- [@SavioCartaxo - Savio Cartaxo](https://github.com/SavioCartaxo)
+
