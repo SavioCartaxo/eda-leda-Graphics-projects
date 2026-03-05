@@ -76,7 +76,7 @@ public class Node {
         sb.append(originalValue).append(" -> ");
 
         for (Node node : connections) {
-            sb.append(node.getValue()).append(" ");
+            sb.append(node.getOriginalValue()).append(" ");
         }
 
         return sb.toString();
