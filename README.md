@@ -221,8 +221,14 @@ Antes de iniciar a DFS, criamos as seguintes estruturas:
 
 **onStack**: array booleano que nos diz, em O(1), se um node está atualmente na stack. Essencial para a atualização correta do low.
 
-Estado inicial:
+Como os valores dos vértices podem ser arbitrários, cada nó recebe na entrada um índice contíguo de 0 a n-1, permitindo que as estruturas auxiliares sejam arrays primitivos acessados diretamente. Cada nó guarda dois valores: o índice normalizado, usado internamente pelo algoritmo para indexar as estruturas, e o valor original, usado apenas na saída para identificar os vértices de cada SCC. O custo do mapeamento é pago uma única vez na leitura da entrada.
 
+```
+Valor original:  10    57    23
+Índice interno:   0     1     2
+```
+---
+Estado inicial:
 ```
 ids     = [-1, -1, -1]
 low     = [ 0,  0,  0]
