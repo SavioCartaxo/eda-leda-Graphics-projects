@@ -1,88 +1,91 @@
 package main.java.algoritmos;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
-public class Tarjan{
-    private ArrayList<Node> graph;
-    private static int UNVISITED = -1;
-    private int id;
-    private Map<Integer, Integer> ids; // Usado para dizer se um nó foi ou não visitado
-    private Map<Integer, Integer> low; // Usado para dar a cada nó um Low Link Value
-    private Set<Integer> onStack;  // Diz se cada nó está atualmente na pilha;
-    private ArrayList<Integer> stack; 
-    private ArrayList<ArrayList<Integer>> out; // Saída a qual cada elemento da lista é um SCC
+/**
+ * Algoritmo de Tarjan para Strongly Connected Components (SCCs).
+ * Complexidade: O(V + E)
+ */
+public class Tarjan {
+
+    private static final int UNVISITED = -1;
+
+    private int[] ids;
+    private int[] low;
+    private boolean[] onStack;
+    private int[] stack;
+    private int stackTop;
+
+    private int[] id_counter = {0};
     private int countSCC;
+    private ArrayList<Node>[] adj;
+    private Map<Integer,Integer> nodeIndex; // valor do nó → índice 0..n-1
 
+    public int scc(ArrayList<Node> graph) {
+        final int n = graph.size();
 
-    //public static int count_scc(ArrayList<ArrayList<int>> vector){
-    //}
+        nodeIndex = new HashMap<>(n * 2);
+        for (int i = 0; i < n; i++) {
+            nodeIndex.put(graph.get(i).getValue(), i);
+        }
 
-    public ArrayList<ArrayList<Integer>> scc(ArrayList<Node> graph){
-        // iniciando variáveis
-        this.graph = graph;
-        int n = graph.size();
-        
-        ids = new HashMap<>();
-        low = new HashMap<>();
-        onStack = new HashSet<>();
-        stack = new ArrayList<>();
-        out = new ArrayList<>();
+        ids = new int[n];
+        low = new int[n];
+        onStack = new boolean[n];
+        stack = new int[n];
+        stackTop = 0;
 
-        id = 0;
+        Arrays.fill(ids, UNVISITED);
+
+        id_counter[0] = 0;
         countSCC = 0;
-        for(int i = 0; i < n; i++){
-            int nodeValue = graph.get(i).getValue();
-            ids.put(nodeValue, UNVISITED);
+
+        // Cache das adjacências para evitar chamadas repetidas a getConnections()
+        ArrayList<Node>[] adjLocal = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            adjLocal[i] = graph.get(i).getConnections();
+        }
+        adj = adjLocal;
+
+        for (int i = 0; i < n; i++) {
+            if (ids[i] == UNVISITED) {
+                dfs(i);
+            }
         }
 
-        // Chamando a DFS para cada vértice  
-        for(int i = 0; i < n; i++){
-            int nodeValue = graph.get(i).getValue();
-            if(ids.get(nodeValue) == UNVISITED)
-                dfs(graph.get(i));
-        }
-
-        return out;
+        return countSCC;
     }
 
-    private void dfs(Node u){
-        // Como é a primeira vez que u é visitado, atualizamos seu valor nas variáveis auxiliares
-        stack.add(u.getValue());
-        onStack.add(u.getValue());
-        ids.put(u.getValue(), id);
-        low.put(u.getValue(), id);
-        id++;
-        
-        // Visitar todos os vizinho e manter o menor valor de id
-        // para entre os nós que podem ser visitados partindo do nó atual
-        for(Node v : u.getConnections()){
-            if (ids.get(v.getValue()) == UNVISITED) {
+    private void dfs(int u) {
+        ids[u] = id_counter[0];
+        low[u] = id_counter[0];
+        id_counter[0]++;
+        stack[stackTop++] = u;
+        onStack[u] = true;
+
+        for (Node vNode : adj[u]) {
+            Integer vBoxed = nodeIndex.get(vNode.getValue());
+            if (vBoxed == null) continue; // vizinho fora do grafo
+            int v = vBoxed;
+
+            if (ids[v] == UNVISITED) {
                 dfs(v);
-                low.put(u.getValue(), Math.min(low.get(u.getValue()), low.get(v.getValue())));
-            } 
-            else if (onStack.contains(v.getValue())) {
-                low.put(u.getValue(), Math.min(low.get(u.getValue()), low.get(v.getValue())));
+                low[u] = Math.min(low[u], low[v]);
+            } else if (onStack[v]) {
+                // back-edge: usa ids[v], não low[v]
+                low[u] = Math.min(low[u], ids[v]);
             }
         }
 
-        // Após minimizar o valor de id atual e visitar todos os vizinho 'u'
-        // verificamos se estamos em um scc, esvaziamos o dado stack até voltarmos ao início do scc
-        if(ids.get(u.getValue()) == low.get(u.getValue())){
-            ArrayList<Integer> component = new ArrayList<>();
-
+        // u é raiz de um SCC
+        if (ids[u] == low[u]) {
             while (true) {
-                int node = stack.remove(stack.size() - 1);
-                onStack.remove(node);
-                component.add(node);
-
-                if (node == u.getValue()) break;
+                int node = stack[--stackTop];
+                onStack[node] = false;
+                low[node] = ids[u]; // todos do SCC apontam para a mesma raiz
+                if (node == u) break;
             }
-            
-            out.add(component);
             countSCC++;
         }
-    }       
+    }
 }
