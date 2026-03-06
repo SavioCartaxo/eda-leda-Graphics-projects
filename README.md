@@ -262,8 +262,6 @@ onStack = [false, false, false]
 id = 0
 ```
 
----
-
 ### Execução
 
 Iteramos pelos nodes. O node 1 tem ids[1] == -1, chamamos DFS(1), atribuímos ids[1] = low[1] = 0, incrementamos id e adicionamos à stack:
@@ -312,6 +310,71 @@ Todos os nodes foram visitados. SCCs encontrados: **{1, 2}** e **{3}**.
 
 O node 3 forma um SCC sozinho pois, apesar de alcançar o node 1, não há caminho de volta até ele, ou seja, não há ciclo envolvendo o node 3.
 
+---
+
+# Scripts
+
+---
+
+## Geração de Grafo Linear
+
+Para a realização dos experimentos, foi utilizado um script responsável por gerar automaticamente grafos direcionados com *estrutura linear*. Nesse tipo de grafo, os vértices são organizados em sequência, onde cada vértice _i_ possui uma aresta direcionada para o vértice _i+1_, formando uma cadeia de nós conectados em uma única direção.
+
+--- Imagem ---
+
+Como não existem caminhos de retorno entre os vértices, não há ciclos no grafo. Dessa forma, nenhum par de vértices é mutuamente alcançável. Consequentemente, cada vértice forma sua própria Componente Fortemente Conectada (SCC), resultando em _N_ SCCs para um grafo com _N_ vértices.
+
+Esse tipo de estrutura permite avaliar o comportamento dos algoritmos de detecção de SCC em grafos sem ciclos, onde o número de componentes fortemente conectadas é máximo.
+
+## Geração de Grafo Cíclico
+
+Também foi utilizado um script para gerar grafos direcionados com *estrutura cíclica*. Nesse caso, cada vértice _i_ possui uma aresta para o vértice _i+1_, e o último vértice possui uma aresta que retorna para o primeiro, formando um único ciclo.
+
+--- Imagem ---
+
+Nessa estrutura, existe um caminho entre qualquer par de vértices ao percorrer o ciclo, permitindo também o retorno ao vértice de origem. Assim, todos os vértices são mutuamente alcançáveis.
+
+Portanto, todo o grafo forma uma única Componente Fortemente Conectada (SCC), independentemente do número de vértices.
+
+## Geração de Grafo Aleatório
+
+---
+
+# Experimento
+
+A experimentação compara o desempenho do algoritmo de Kosaraju com o de Tarjan para análise de tempo de execução e uso de memória. Ambos os algoritmos possuem complexidade de tempo O(V + E), onde V é o número de vértices e E o número de arestas do grafo, porém diferem significativamente em sua abordagem: o Tarjan realiza apenas uma busca em profundidade enquanto o Kosaraju realiza duas, além de construir explicitamente o grafo transposto em memória, resultando em complexidade de espaço O(V + E) contra O(V) do Tarjan. Essa diferença estrutural, embora invisível na notação assintótica, tem impacto direto no desempenho prático dos algoritmos, especialmente para entradas grandes.
+
+Os grafos foram gerados com entradas de tamanho 10², 10³, 10⁴, 10⁵ e 10⁶ vértices e arestas. Cada configuração foi executada 20 vezes por algoritmo, e o tempo médio de execução foi obtido utilizando System.currentTimeMillis() antes e após cada chamada, com o resultado expresso em milissegundos. A média de 20 execuções foi utilizada para reduzir o impacto de variações pontuais causadas por fatores externos, como garbage collection da JVM e variações de escalonamento do sistema operacional.
+O experimento foi realizado em uma máquina com as seguintes especificações:
+
+
+## Especificações da Máquina
+|||
+|-|-|
+|RAM|12GB|
+|CPU|RYZEN 7 5700U|
+
+## Resultados
+
+| Entrada | Kosaraju cíclico (ms) | Tarjan cíclico (ms) | Kosaraju linear (ms) | Tarjan linear (ms) |
+|:-------:|:---------------------:|:-------------------:|:--------------------:|:------------------:|
+| 10²     | 1                     | 1                   | 1                    | 1                  |
+| 10³     | 3                     | 2                   | 4                    | 3                  |
+| 10⁴     | 18                    | 10                  | 15                   | 11                 |
+| 10⁵     | 67                    | 44                  | 71                   | 45                 |
+| 10⁶     | 235                   | 129                 | 267                  | 148                |
+
+A Tabela apresenta o tempo de execução (em milissegundos) dos algoritmos de Kosaraju e Tarjan para encontrar Componentes Fortemente Conectados (SCC), considerando grafos com estruturas cíclicas e lineares. Os experimentos foram realizados com entradas variando de 10² a 10⁶ vértices.
+
+## Conclusão
+
+Os resultados obtidos confirmam o que a análise teórica já sugeria: embora Kosaraju e Tarjan compartilhem a mesma complexidade de tempo assintótica O(V + E), o Tarjan se mostrou consistentemente mais rápido em todos os cenários testados, para ambos os tipos de grafo e em todas as entradas analisadas.
+
+A diferença de desempenho se torna cada vez mais evidente conforme o tamanho da entrada cresce. Para entradas pequenas, como 10², ambos os algoritmos completam a execução em 1ms, tornando a diferença imperceptível na prática. No entanto, à medida que o número de vértices aumenta, a vantagem do Tarjan se acentua de forma expressiva. Para o grafo cíclico com 10⁶ vértices, o Kosaraju levou 235ms contra 129ms do Tarjan, o Tarjan foi aproximadamente 45% mais rápido. Para o grafo linear com a mesma entrada, a diferença é ainda maior: 267ms para o Kosaraju contra 148ms do Tarjan, uma redução de aproximadamente 45% no tempo de execução.
+
+Esse comportamento era esperado e pode ser explicado pela diferença estrutural entre os dois algoritmos. O Kosaraju realiza duas buscas em profundidade completas no grafo, além de construir explicitamente o grafo transposto em memória. Essa construção do transposto percorre todos os V vértices e E arestas uma vez adicional, e o grafo resultante ocupa O(V + E) de memória extra. O Tarjan, por sua vez, resolve o problema em uma única passagem pelo grafo, utilizando apenas estruturas auxiliares de tamanho O(V) — os arrays de ids, low e onStack, além da pilha. Na prática, isso significa que o Tarjan processa cada vértice e cada aresta exatamente uma vez, enquanto o Kosaraju os processa pelo menos três vezes: uma na primeira DFS, uma na construção do transposto e uma na segunda DFS.
+
+Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é superior ao Kosaraju tanto em tempo quanto em memória na prática. A principal vantagem do Kosaraju reside na sua simplicidade conceitual e facilidade de implementação — a ideia de duas DFS com inversão do grafo é mais intuitiva do que o mecanismo de low-link values utilizado pelo Tarjan, o que justifica seu uso em contextos didáticos ou quando a clareza do código é prioritária em relação à performance.
 
 ---
 
