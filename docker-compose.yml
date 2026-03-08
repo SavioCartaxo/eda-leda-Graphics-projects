@@ -1,23 +1,7 @@
 version: "3.8"
 services:
-  kosaraju:
+  java:
     build:
       context: .
-      dockerfile: kosaraju/Dockerfile
-    container_name: kosaraju_bench
-    stdin_open: true
-    tty: false
-
-  tarjan:
-    build:
-      context: .
-      dockerfile: tarjan/Dockerfile
-    container_name: tarjan_bench
-    stdin_open: true
-    tty: false
-
-  benchmark:
-    build:
-      context: .
-      dockerfile: scripts/Dockerfile.python
-    container_name: benchmark_python
+      dockerfile: Dockerfile.java
+    container_name: java_bench
