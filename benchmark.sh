@@ -249,8 +249,8 @@ with open(saida, 'w', newline='') as f:
             n,
             meta.get('arestas', ''),
             meta.get('k_sccs', ''),
-            d1.get(n, {}).get('media_ms', ''),
-            d2.get(n, {}).get('media_ms', '')
+            d1.get(n, {}).get('mediana_ms', ''),
+            d2.get(n, {}).get('mediana_ms', '')
         ])
 
 print(f"CSV comparativo salvo em: {saida}")
