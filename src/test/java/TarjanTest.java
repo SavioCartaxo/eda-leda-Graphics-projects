@@ -31,7 +31,7 @@ public class TarjanTest {
 
         Tarjan tj = new Tarjan();
         long startTime = System.currentTimeMillis(); // tempo inicial
-        int count = tj.scc(grafo).size();
+        int count = tj.findSCCs(grafo).size();
         long endTime = System.currentTimeMillis();   // tempo final
 
         System.out.println("Quantidade de SCC's: " + count);
