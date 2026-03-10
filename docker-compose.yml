@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  java:
+    build:
+      context: .
+      dockerfile: Dockerfile.java
+    container_name: java_bench

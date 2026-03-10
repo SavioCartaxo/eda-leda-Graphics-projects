@@ -8,10 +8,8 @@ entrada, especificamente para N = 10^2, 10^3, 10^4, 10^5 e 10^6 (com K = N),
 permitindo avaliar o comportamento e a eficiência do algoritmo em volumes
 crescentes de dados.
 """
-def generate_cycle_graph(N, K):
-    if K != N:
-        raise ValueError("Para um ciclo simples, K deve ser igual a N.")
-
+def generate_linear_graph(N):
+    K = N - 1
     print(f"{N} {K}")
 
     # Nós
@@ -19,18 +17,17 @@ def generate_cycle_graph(N, K):
         print(i)
 
     # Arestas formando ciclo
-    for i in range(1, N):
+    for i in range(1, K):
         print(f"{i} {i+1}")
-    print(f"{N} 1")
+    print(f"{K} {N}")
 
 """
 Para executar via terminal:
-python script_cycle_graph.py N K > arquivo_saida.txt
+python scripts//generate_inputs/script_linear_graph.py N K > arquivo_saida.txt
 
 Exemplo:
-python script_cycle_graph.py 1000000 1000000 > input.txt
+python scripts/generate_inputs/script_linear_graph.py 1000000 1000000 > input.txt
 """
 if __name__ == "__main__":
     N = int(sys.argv[1])
-    K = int(sys.argv[2])
-    generate_cycle_graph(N, K)
+    generate_linear_graph(N)

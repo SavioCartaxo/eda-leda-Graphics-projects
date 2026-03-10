@@ -19,10 +19,10 @@ import main.java.algoritmos.Node;
  3) Executar o teste:
 
     • No PowerShell (Windows):
-      Get-Content input.txt | java -cp out test.java.KosarajuTest
+      Get-Content arquivo_saida.txt | java -Xss512m -cp out test.java.KosarajuTes
 
     • No Linux ou MacOS:
-      java -cp out test.java.KosarajuTest < input.txt
+      java -Xss512m -cp out test.java.KosarajuTest < input.txt
 */
 public class KosarajuTest {
     public static void main(String[] args) {
@@ -33,10 +33,11 @@ public class KosarajuTest {
         Kosaraju kosaraju = new Kosaraju();
 
         long startTime = System.currentTimeMillis(); // tempo inicial
-        int qtdSCC = kosaraju.contadorSCC(grafo);
+        ArrayList<ArrayList<Integer>> SCCs = kosaraju.findSCCs(grafo);
         long endTime = System.currentTimeMillis();   // tempo final
 
-        System.out.println("Quantidade de SCC's: " + qtdSCC);
+        System.out.println("SCC's: " + SCCs);
+        System.out.println("Quantidade de SCC's: " + SCCs.size());
         System.out.println("Tempo de execução: " + (endTime - startTime) + " ms");
         
     }
