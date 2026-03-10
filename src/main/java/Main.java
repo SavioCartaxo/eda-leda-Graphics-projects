@@ -6,6 +6,7 @@ import main.java.algoritmos.Kosaraju;
 import main.java.algoritmos.TarjanRecursivoAcessoDireto;
 import main.java.algoritmos.TarjanRecursivoHashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.io.File;
@@ -17,8 +18,9 @@ public class Main {
     // Não são contabilizadas no resultado
     private static final int WARMUP = 5;
 
-    // Épocas de medição — usadas para calcular a média
-    private static final int EPOCAS = 30;
+    // Épocas de medição — usadas para calcular a mediana
+    // 11 épocas: o valor do meio (6º) é a mediana, eliminando outliers naturalmente
+    private static final int EPOCAS = 11;
 
     // Algoritmos válidos — usados na validação e no switch de execução
     private static final java.util.Set<String> ALGORITMOS_VALIDOS = new java.util.HashSet<>(
@@ -44,11 +46,11 @@ public class Main {
         new File("/app/resultados").mkdirs();
         String csvPath = "/app/resultados/resultado_" + algoritmo + ".csv";
         FileWriter fw = new FileWriter(csvPath);
-        fw.write("n,arestas,k_sccs,media_ms\n");
+        fw.write("n,arestas,k_sccs,mediana_ms\n");
 
         System.out.println("Algoritmo : " + algoritmo);
         System.out.println("Warmup    : " + WARMUP + " epocas (descartadas)");
-        System.out.println("Medicao   : " + EPOCAS + " epocas");
+        System.out.println("Medicao   : " + EPOCAS + " epocas (mediana)");
         System.out.println("===========================================");
 
         // Itera sobre cada arquivo de input recebido como argumento
@@ -62,7 +64,7 @@ public class Main {
             // Lê o grafo UMA vez e reutiliza nas épocas
             // Isso elimina o tempo de I/O da medição
             ArrayList<Node> grafoBase = lerGrafo(arquivo);
-            int n = grafoBase.size();
+            int n       = grafoBase.size();
             int arestas = contarArestas(grafoBase);
             int kSccs   = extrairK(nomeArquivo);
 
@@ -79,7 +81,7 @@ public class Main {
             // -----------------------------------------------
             // MEDIÇÃO — só o algoritmo de SCC é cronometrado
             // -----------------------------------------------
-            long total = 0;
+            double[] tempos = new double[EPOCAS];
             for (int e = 0; e < EPOCAS; e++) {
                 // Clona o grafo para garantir estado limpo a cada época
                 // sem precisar reler o arquivo (elimina I/O do loop)
@@ -87,13 +89,17 @@ public class Main {
 
                 long inicio = System.nanoTime();
                 executar(algoritmo, grafoClone);
-                total += System.nanoTime() - inicio;
+                tempos[e] = (System.nanoTime() - inicio) / 1_000_000.0;
             }
 
-            double mediaMs = (total / (double) EPOCAS) / 1_000_000.0;
-            System.out.printf("[OK] n=%-8d → media: %.4f ms%n", n, mediaMs);
+            // Ordena os tempos e pega o valor do meio (mediana)
+            // Isso elimina picos causados por GC, interrupções do SO, etc.
+            Arrays.sort(tempos);
+            double mediana = tempos[EPOCAS / 2];
 
-            fw.write(n + "," + arestas + "," + kSccs + "," + mediaMs + "\n");
+            System.out.printf("[OK] n=%-8d → mediana: %.4f ms%n", n, mediana);
+
+            fw.write(n + "," + arestas + "," + kSccs + "," + mediana + "\n");
             fw.flush(); // garante escrita mesmo se o programa for interrompido
         }
 
