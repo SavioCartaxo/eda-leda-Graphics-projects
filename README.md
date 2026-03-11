@@ -116,35 +116,34 @@ No entanto, um grafo dirigido pode não ser fortemente conectado como um todo. N
 
 ### Visão Geral
 
-O algoritmo de Kosaraju, também conhecido como algoritmo Kosaraju-Sharir, é um algoritmo que encontra componentes fortemente conectados (SCC) de um grafo direcionado em tempo linear O(V + E) quando representado por lista de adjascência, onde V é o número de vértices (ou nós) e E o número de arestas do grafo. 
+O algoritmo de Kosaraju, também conhecido como algoritmo Kosaraju-Sharir, é um algoritmo que encontra componentes fortemente conectados (SCC) de um grafo direcionado em tempo linear O(V + E) quando representado por lista de adjacência, onde V é o número de vértices (ou nós) e E o número de arestas do grafo. 
 
 A implementação utilizada constrói explicitamente o grafo transposto em memória, o que usa espaço adicional O(V + E), mas simplifica a implementação e o entendimento em relação a abordagens que evitam essa construção explícita. A ideia é usar busca em profundidade duas vezes, fazendo uso da propriedade de que um grafo e seu transposto possuem exatamente os mesmos SCCs.
 
 Vamos usar o grafo direcionado abaixo como exemplo para executar o algoritmo de Kosaraju.
-
 
 ![Grafo original](README_IMAGES/grafo_imagem1.png)
 
 ## Execução do Algortimo
 ### Primeira Etapa
 
-Qual o nosso objetivo inicial? primeiro, devemos criar uma pilha que representa a ordem de saída dos vértices através de uma busca em profundidade e guardamos os vértices já visitados. A versão da DFS usada para a explicação do algoritmo será a recursiva, pois ela é mais intuitiva e simples de entender. A DFS faz chamadas recursivas para cada vizinho não visitado, e ao retornar de todas essas chamadas — ou seja, quando não há mais vizinhos a explorar — o vértice é adicionado à pilha. 
+Qual o nosso objetivo inicial? Primeiro, devemos criar uma pilha que representa a ordem de saída dos vértices através de uma busca em profundidade e guardar os vértices já visitados. A versão da DFS usada para a explicação do algoritmo será a recursiva, pois ela é mais intuitiva e simples de entender. A DFS faz chamadas recursivas para cada vizinho não visitado, e ao retornar de todas essas chamadas — ou seja, quando não há mais vizinhos a explorar — o vértice é adicionado à pilha.
 
-Podemos começar a DFS por qualquer vértice, mas por convenção iremos utilizar o 1. Realizando a busca, visitamos o 1 e vemos a quem ele esta ligado. Vemos que ele está ligado ao 2, então visitamos o 2, e vemos que ele está ligado ao 3, visitamos o 3. Como o 3 não tem mais vizinhos não visitados, ele é adicionado à pilha. A recursão retorna para o 2, que também não tem mais vizinhos, e é adicionado. Por fim o 1 é adicionado. 
+Podemos começar a DFS por qualquer vértice, mas, por convenção, iremos utilizar o 1. Realizando a busca, visitamos o 1 e vemos a quem ele está ligado. Vemos que ele está ligado ao 2, então visitamos o 2, e vemos que ele está ligado ao 3; visitamos o 3. Como o 3 não tem mais vizinhos não visitados, ele é adicionado à pilha. A recursão retorna para o 2, que também não tem mais vizinhos e é adicionado. Por fim, o 1 é adicionado.
 
 ```
 pilha     = [3, 2, 1]
 visitados = {1, 2, 3}
 ```
 
-Ainda existem vértices não visitados, iniciamos uma nova DFS a partir do vértice 4, escolhido arbitrariamente dentre os não visitados. Visitando o 4, vemos que ele tem o 3 e o 5 como vizinhos, o 3 já foi visitado, mas o 5 não. Visitamos 5 e vemos que ele está ligado ao 6, visitamos o 6. O 6 está ligado ao 4, que já foi visitado, então adicionamos o 6 à pilha, e a recursão retorna para o 5, que é adicionado, e por fim o 4 é adicionado.
+Ainda existem vértices não visitados, iniciamos uma nova DFS a partir do vértice 4, escolhido arbitrariamente dentre os não visitados. Visitando o 4, vemos que ele tem o 3 e o 5 como vizinhos; o 3 já foi visitado, mas o 5 não. Visitamos o 5 e vemos que ele está ligado ao 6; visitamos o 6. O 6 está ligado ao 4, que já foi visitado, então adicionamos o 6 à pilha, e a recursão retorna para o 5, que é adicionado, e por fim o 4 é adicionado.
 
 ```
 pilha     = [3, 2, 1, 6, 5, 4]
 visitados = {1, 2, 3, 4, 5, 6}
 ```
 
-Ainda temos nós não visitados, o 9. O 9 está ligado ao 4, que já foi visitado, então o 9 é adicionado na pilha. Finalmente, nossa pilha está completa, pois não temos mais nós para visitar.
+Ainda temos nós não visitados: o 9. O 9 está ligado ao 4, que já foi visitado, então o 9 é adicionado à pilha. Finalmente, nossa pilha está completa, pois não temos mais nós para visitar.
 
 ```
 pilha     = [3, 2, 1, 6, 5, 4, 9]
@@ -155,16 +154,17 @@ visitados = {1, 2, 3, 4, 5, 6, 9}
 
 Agora, o próximo passo é inverter a direção de todas as arestas do grafo, a fim de encontrar o seu transposto. Para cada vértice u do grafo, percorremos seus vizinhos v e adicionamos u como vizinho de v no grafo transposto — ou seja, toda aresta u → v vira v → u. O processo é feito em O(V + E), visitando cada vértice e cada aresta exatamente uma vez.
 
+Agora, o próximo passo é inverter a direção de todas as arestas do grafo, a fim de encontrar o seu transposto. Para cada vértice u do grafo, percorremos seus vizinhos v e adicionamos u como vizinho de v no grafo transposto — ou seja, toda aresta u → v vira v → u. O processo é feito em O(V + E), visitando cada vértice e cada aresta exatamente uma vez.
 
 ![Grafo transposto](README_IMAGES/grafo_imagem2.png)
 
-Por que queremos o transposto do grafo? Sabemos que um SCC possui caminhos nos dois sentidos entre todos os seus vértices, ou seja, é por definição bidirecional. Ao invertermos as arestas, essa característica se preserva — o que era ciclo continua sendo ciclo. Porém, as arestas que conectavam SCCs distintos agora apontam na direção oposta, bloqueando a DFS de vazar de um SCC para outro. Isso nos permite, na segunda DFS, explorar exatamente um SCC por vez. 
+Por que queremos o transposto do grafo? Sabemos que um SCC possui caminhos nos dois sentidos entre todos os seus vértices, ou seja, é, por definição, bidirecional. Ao invertermos as arestas, essa característica se preserva — o que era ciclo continua sendo ciclo. Porém, as arestas que conectavam SCCs distintos agora apontam na direção oposta, bloqueando a DFS de vazar de um SCC para outro. Isso nos permite, na segunda DFS, explorar exatamente um SCC por vez.
 
 ### Terceira Etapa
 
-Feito isso, realizamos a segunda busca em profundidade, agora no grafo transposto. Retiramos os vértices do topo da pilha um a um — lembrando que o topo representa o vértice que terminou por último na primeira DFS, ou seja, o de maior alcance. Para cada vértice retirado que ainda não foi visitado, criamos um novo SCC e iniciamos uma DFS no grafo transposto para encontrar todos os seus vértices. Todos os vértices alcançados nessa DFS pertencem ao mesmo SCC. Vértices já visitados são ignorados, pois já foram atribuídos a um componente. Ao esvaziarmos a pilha, temos todos os SCCs do grafo identificados. 
+Feito isso, realizamos a segunda busca em profundidade, agora no grafo transposto. Retiramos os vértices do topo da pilha um a um — lembrando que o topo representa o vértice que terminou por último na primeira DFS, ou seja, o de maior alcance. Para cada vértice retirado que ainda não foi visitado, criamos um novo SCC e iniciamos uma DFS no grafo transposto para encontrar todos os seus vértices. Todos os vértices alcançados nessa DFS pertencem ao mesmo SCC. Vértices já visitados são ignorados, pois já foram atribuídos a um componente. Ao esvaziarmos a pilha, temos todos os SCCs do grafo identificados.
 
-Dando início a execução desta parte final, aplicamos a busca em profundidade no elemento do topo da pilha, que é o vértice 9. Como ele não foi visitado, iniciamos a DFS para montar seu SCC. Percebemos que ele não tem vizinhos no grafo transposto, portanto o 9 sozinho já é um SCC. 
+Dando início à execução desta parte final, aplicamos a busca em profundidade no elemento do topo da pilha, que é o vértice 9. Como ele não foi visitado, iniciamos a DFS para montar seu SCC. Percebemos que ele não tem vizinhos no grafo transposto; portanto, o 9 sozinho já é um SCC.
 
 ```
 pilha      = [3, 2, 1, 6, 5, 4]
@@ -188,7 +188,7 @@ visitados2 = {9, 4, 5, 6, 1, 2, 3}
 SCCs       = [[9], [4, 5, 6], [1, 2, 3]]
 ```
 
-Nossa pilha está vazia, portanto encerrou a execução do algoritmo. Finalmente, descobrimos que o nosso grafo do exemplo possui três componentes fortemente conectados.
+Nossa pilha está vazia, portanto, encerrou a execução do algoritmo. Finalmente, descobrimos que o nosso grafo do exemplo possui três componentes fortemente conectados.
 
 
 ![SCCs](README_IMAGES/grafo_imagem3.png)
@@ -196,8 +196,7 @@ Nossa pilha está vazia, portanto encerrou a execução do algoritmo. Finalmente
 
 Temos os SCCs {9}, {4, 5, 6} e {1, 2, 3}.
 
-O conceito é simples e o Kosaraju é eficiente, no entanto, não é mais eficiente que outros algoritmos que encontram SCCs como o Tarjan, que embora tenha uma complexidade de tempo assintoticamente igual ao Kosaraju, realiza apenas uma busca em profundidade, ao invés de duas, levando-o a ser mais rápido na prática.
-
+O conceito é simples e o Kosaraju é eficiente; no entanto, não é mais eficiente que outros algoritmos que encontram SCCs, como o Tarjan, que, embora tenha uma complexidade de tempo assintoticamente igual à do Kosaraju, realiza apenas uma busca em profundidade, ao invés de duas, levando-o a ser mais rápido na prática.
 
 ---
 
@@ -208,11 +207,11 @@ Dado um grafo direcionado, queremos identificar quais conjuntos de vértices est
 
 ### Ideia do Algoritmo
 
-Durante a DFS, ao explorar um vértice u, surge a pergunta fundamental: existe algum caminho que permita alcançar novamente um vértice visitado anteriormente que ainda faz parte da exploração atual? Para medir isso, o algoritmo associa dois valores a cada vértice: id[u], que representa a ordem de visita na DFS, e low[u], chamado de low-link value (LLK), que representa o menor id alcançável a partir de u, incluindo ele próprio, considerando apenas vértices que ainda estão ativos na pilha da DFS. Em termos intuitivos, low[u] responde à pergunta: qual é o vértice mais antigo ainda ativo que consigo alcançar partindo de u?
+Durante a DFS, ao explorar um vértice u, surge a pergunta fundamental: existe algum caminho que permita alcançar novamente um vértice visitado anteriormente que ainda faça parte da exploração atual? Para medir isso, o algoritmo associa dois valores a cada vértice: id[u], que representa a ordem de visita na DFS, e low[u], chamado de low-link value (LLK), que representa o menor id alcançável a partir de u, incluindo ele próprio, considerando apenas vértices que ainda estão ativos na pilha da DFS. Em termos intuitivos, low[u] responde à pergunta: qual é o vértice mais antigo ainda ativo que consigo alcançar partindo de u?
 
 ### Atualização do Low-Link
 
-Ao explorar uma aresta u → v, existem dois casos. Se v ainda não foi visitado, executamos DFS em v e depois propagamos a informação de retorno fazendo low[u] = min(low[u], low[v]), permitindo que ciclos encontrados mais profundamente influenciem vértices ancestrais. Se v já foi visitado, precisamos verificar se ele ainda pertence à exploração atual, caso pertença, encontramos um caminho de retorno dentro da mesma componente e atualizamos low[u] = min(low[u], id[v]). Essa distinção é essencial para evitar misturar componentes diferentes.
+Ao explorar uma aresta u → v, existem dois casos. Se v ainda não foi visitado, executamos DFS em v e depois propagamos a informação de retorno fazendo low[u] = min(low[u], low[v]), permitindo que ciclos encontrados mais profundamente influenciem vértices ancestrais. Se v já foi visitado, precisamos verificar se ele ainda pertence à exploração atual; caso pertença, encontramos um caminho de retorno dentro da mesma componente e atualizamos low[u] = min(low[u], id[v]). Essa distinção é essencial para evitar misturar componentes diferentes.
 
 ### Uso da Pilha
 
@@ -220,16 +219,15 @@ O Tarjan utiliza uma pilha para manter um invariante importante: apenas vértice
 
 ### Detecção de uma SCC
 
-Após explorar todos os vizinhos de um vértice u, verificamos a condição id[u] == low[u]. Se ela for verdadeira, significa que não existe caminho retornando para um vértice mais antigo na DFS, logo u é o início de uma componente fortemente conectada. Nesse momento removemos vértices da pilha até remover u; todos os vértices removidos formam exatamente uma SCC. Uma SCC é definida como um conjunto de vértices onde qualquer vértice alcança qualquer outro e existe caminho de ida e volta entre todos eles, sendo que cada vértice do grafo pertence exatamente a uma única SCC.
+Após explorar todos os vizinhos de um vértice u, verificamos a condição id[u] == low[u]. Se ela for verdadeira, significa que não existe caminho retornando para um vértice mais antigo na DFS; logo, u é o início de uma componente fortemente conectada. Nesse momento, removemos vértices da pilha até remover u; todos os vértices removidos formam exatamente uma SCC. Uma SCC é definida como um conjunto de vértices onde qualquer vértice alcança qualquer outro e existe caminho de ida e volta entre todos eles, sendo que cada vértice do grafo pertence exatamente a uma única SCC.
 
 ### Fluxo Geral do Algoritmo
 
-Inicializamos todos os vértices como não visitados e executamos DFS a partir de cada vértice ainda não explorado. Ao visitar um nó, atribuímos id e low, inserimos o vértice na pilha e exploramos seus vizinhos atualizando os valores de low-link conforme os casos descritos. Sempre que id == low, removemos vértices da pilha formando uma nova componente fortemente conectada. Cada vértice e cada aresta são processados apenas uma vez, garantindo complexidade O(V + E) em tempo e O(V) em memória.
+Inicializamos todos os vértices como não visitados e executamos DFS a partir de cada vértice ainda não explorado. Ao visitar um nó, atribuímos id e low, inserimos o vértice na pilha e exploramos seus vizinhos, atualizando os valores de low-link conforme os casos descritos. Sempre que id == low, removemos vértices da pilha formando uma nova componente fortemente conectada. Cada vértice e cada aresta são processados apenas uma vez, garantindo complexidade O(V + E) em tempo e O(V) em memória.
 
 ### Intuição Final
 
 Podemos interpretar o algoritmo da seguinte forma: id indica quando entramos em um vértice, low indica quão longe conseguimos voltar na exploração, e a pilha representa os vértices ainda ativos na DFS. Quando não é mais possível voltar para vértices anteriores, uma região do grafo se fecha e uma SCC é identificada. Dessa maneira, o algoritmo de Tarjan encontra todas as componentes fortemente conectadas em uma única passagem pelo grafo, de forma eficiente e elegante.
-
 
 Vamos tomar como exemplo o seguinte grafo:
 
@@ -260,6 +258,7 @@ Valor original:  10    57    23
 Índice interno:   0     1     2
 ```
 ---
+
 Estado inicial:
 ```
 ids     = [-1, -1, -1]
