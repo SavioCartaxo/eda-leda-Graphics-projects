@@ -77,12 +77,14 @@ O diretório `scripts` reúne os scripts desenvolvidos em **Python** utilizados 
 Considere a figura a seguir, a qual representa um mapa de vias de trânsito:
 
 ![Roads Representation](README_IMAGES/roads.jpg)
+
 Figura 1.0
 
 Essas vias podem ser representadas diagramaticamente por pontos ligados por linhas: os pontos P, Q, R e S são chamados de vértices, as linhas são chamadas de arestas e todo o diagrama é chamado de grafo. Note que a interseção entre as linhas PR e QS não é um vértice uma vez que não corresponde a um cruzamento, isto é, não é um ponto onde as ruas se encontram. O conceito de grau de um vértice qualquer é a quantidade de arestas que terminam nesse vértice, é o mesmo que dizer qual o número de ruas em um dado cruzamento na figura acima. Por exemplo, o grau do vértice P é 3.
 
  
 ![Graph Diagram](README_IMAGES/graph.png)
+
 Figura 1.1
 
 O grafo na figura 1.1 pode, além de um mapa de estradas, representar diversas coisas: uma rede elétrica, moléculas ou redes neurais; essencialmente, portanto, um grafo é uma representação de um conjunto de pontos e das ligações entre eles. Na computação são extremamente úteis para lidar com problemas relacionados à rede de computadores, com conexões via Wi-Fi ou cabo entre roteadores, redes sociais e a conexão de usuários que seguem um ao outro, ou até a internet com páginas da web conectadas através de links. 
@@ -91,6 +93,7 @@ Agora imagine que as vias possuem sentido único, ou seja, há apenas uma direç
 
 
 ![Directed Graph Diagram](README_IMAGES/directed_graph.jpg)
+
 Figura 1.2
 
 ## Depth First Search
@@ -99,7 +102,8 @@ Se é preciso encontrar uma informação específica, há de se ter uma forma de
 
 No *depth first search*, procuramos o mais fundo possível no grafo. Esse algoritmo explora um caminho e segue por ele até que não seja mais possível avançar, e então retorna para o vértice de início e explora outro caminho ainda inexplorado, similar a explorar um labirinto sempre por um único caminho de corredores até o fim e, após isso, retornar ao ponto de início para fazer o mesmo por outro caminho, caso esse exista.
  
-![Directed Graph Diagram](README_IMAGES/directed_graph2.jpg)
+![Directed Graph Diagram](README_IMAGES/directed_graph2.png)
+
 Figura 2.0
 
 Na figura 2.0, que se trata de um grafo direcionado, tomando o vértice A como o inicial, o caminho seguido pelo algoritmo seria A → B → D → C → E → F → G → H. Note que, após não encontrar nenhum vértice inexplorado no ponto C, o algoritmo tem que retornar até encontrar um caminho ainda não explorado, repetindo o mesmo processo para esse.
@@ -330,7 +334,7 @@ O node 3 forma um SCC sozinho pois, apesar de alcançar o node 1, não há camin
 
 Para a realização dos experimentos, foi utilizado um script responsável por gerar automaticamente grafos direcionados com *estrutura linear*. Nesse tipo de grafo, os vértices são organizados em sequência, onde cada vértice _i_ possui uma aresta direcionada para o vértice _i+1_, formando uma cadeia de nós conectados em uma única direção.
 
---- Imagem ---
+![Directed Acyclic Graph](README_IMAGES/Directed_Acyclic_Graph.png)
 
 Como não existem caminhos de retorno entre os vértices, não há ciclos no grafo. Dessa forma, nenhum par de vértices é mutuamente alcançável. Consequentemente, cada vértice forma sua própria Componente Fortemente Conectada (SCC), resultando em _N_ SCCs para um grafo com _N_ vértices.
 
@@ -340,7 +344,7 @@ Esse tipo de estrutura permite avaliar o comportamento dos algoritmos de detecç
 
 Também foi utilizado um script para gerar grafos direcionados com *estrutura cíclica*. Nesse caso, cada vértice _i_ possui uma aresta para o vértice _i+1_, e o último vértice possui uma aresta que retorna para o primeiro, formando um único ciclo.
 
---- Imagem ---
+![Directed Cyclic Graph](README_IMAGES/Directed_Cyclic_Graph.png)
 
 Nessa estrutura, existe um caminho entre qualquer par de vértices ao percorrer o ciclo, permitindo também o retorno ao vértice de origem. Assim, todos os vértices são mutuamente alcançáveis.
 
