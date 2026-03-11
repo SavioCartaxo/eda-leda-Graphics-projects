@@ -20,6 +20,10 @@
 
 - [Análise do Tarjan Recursivo](#análise-de-implementação-recursiva-do-algoritmo-de-tarjan)
 
+- [Ambiente isolado com Docker](#uso-do-docker-no-projeto-de-benchmark-scc)
+
+- [Referências](#referências)
+
 
 ### Versionamento de código
 
@@ -355,6 +359,21 @@ A experimentação compara o desempenho do algoritmo de Kosaraju com o de Tarjan
 Os grafos foram gerados com entradas de tamanho 10², 10³, 10⁴, 10⁵ e 10⁶ vértices e arestas. Cada configuração foi executada 20 vezes por algoritmo, e o tempo médio de execução foi obtido utilizando System.currentTimeMillis() antes e após cada chamada, com o resultado expresso em milissegundos. A média de 20 execuções foi utilizada para reduzir o impacto de variações pontuais causadas por fatores externos, como garbage collection da JVM e variações de escalonamento do sistema operacional.
 O experimento foi realizado em uma máquina com as seguintes especificações:
 
+# Uso do Docker no Projeto de Benchmark SCC
+
+## Motivação
+
+Para comparar algoritmos de SCC de forma cientificamente válida, é essencial que todos os testes rodem em um ambiente controlado e reproduzível. Sem Docker, fatores como versão do Java, configurações do sistema operacional e diferenças entre as máquinas dos membros do grupo comprometeriam a consistência dos resultados.
+
+O Docker resolve isso empacotando o código, o compilador e o ambiente de execução em uma imagem isolada — garantindo que o benchmark rode da mesma forma em qualquer máquina.
+
+## Implementação
+
+A imagem base `maven:3.9-eclipse-temurin-21` já inclui Java 21 e Maven, eliminando dependências locais. O `Dockerfile.java` compila o projeto no build e define a JVM com `-Xss512m` para suportar a recursão profunda dos algoritmos recursivos.
+
+Cada algoritmo é um serviço independente no `docker-compose.yml`, com limites de memória e CPU fixos e iguais para todos — reserva igual ao limite garante recursos sempre disponíveis, tornando a comparação justa. Dois volumes são mapeados: `inputs` para os grafos gerados pelo Python e `resultados` para os CSVs gerados pelo Java.
+
+O script `benchmark.sh` usa `docker compose run --rm`, criando e removendo o container a cada execução sem acumular estado entre testes. O build é feito uma única vez, reutilizando cache do Docker quando o código não muda.
 
 ## Especificações da Máquina
 
@@ -366,6 +385,8 @@ O experimento foi realizado em uma máquina com as seguintes especificações:
 | Ambiente de execução | Container Docker |
 
 ## Resultados
+
+Isolamento de recursos, reprodutibilidade entre máquinas e condições idênticas de execução para todos os algoritmos — tornando os resultados do benchmark confiáveis e comparáveis.
 
 | Entrada | Kosaraju cíclico (ms) | Tarjan cíclico (ms) | Kosaraju linear (ms) | Tarjan linear (ms) |
 |:-------:|:---------------------:|:-------------------:|:--------------------:|:------------------:|
@@ -504,7 +525,13 @@ Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é super
 
 ---
 
-## Contribuintes
+# Referências
+
+- [CP-Algorithms](https://cp-algorithms.com/graph/strongly-connected-components.html)
+
+---
+
+# Contribuintes
 
 - [@KalebeSouza-dev - Kalebe Souza](https://github.com/KalebeSouza-dev)
 
