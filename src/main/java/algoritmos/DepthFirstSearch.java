@@ -1,3 +1,4 @@
+package algoritmos;
 import java.util.*;
 
 public class DepthFirstSearch {
