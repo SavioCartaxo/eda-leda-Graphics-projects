@@ -386,6 +386,40 @@ O script `benchmark.sh` usa `docker compose run --rm`, criando e removendo o con
 
 ![baixa_pouco](README_IMAGES/tarjan_kosaraju_baixa_pouco.png)
 
+
+---imagem do grafico baixo_medio---
+
+
+
+---imagem do grafico baixo_muitos---
+
+
+
+---imagem do grafico medio_poucos---
+
+
+
+---imagem do grafico medio-medio---
+
+
+
+---imagem do grafico medio-muitos---
+
+
+
+---imagem do grafico alto_poucos---
+
+
+
+---imagem do grafico alto_medio---
+
+
+
+---imagem do grafico alto_muitos---
+
+
+
+
 ## Resultados
 
 Isolamento de recursos, reprodutibilidade entre máquinas e condições idênticas de execução para todos os algoritmos — tornando os resultados do benchmark confiáveis e comparáveis.
