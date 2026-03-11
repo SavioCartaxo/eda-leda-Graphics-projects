@@ -568,6 +568,7 @@ Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é super
 # Referências
 
 - [CP-Algorithms](https://cp-algorithms.com/graph/strongly-connected-components.html)
+- [Graph-editor](https://csacademy.com/app/graph_editor/)
 
 ---
 
