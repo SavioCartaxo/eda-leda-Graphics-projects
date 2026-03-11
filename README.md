@@ -338,6 +338,8 @@ Portanto, todo o grafo forma uma única Componente Fortemente Conectada (SCC), i
 
 ## Geração de Grafo Aleatório
 
+Grafos Aleatórios Controlados (Controlled Random Graphs),  grafos gerados da seguinte forma: a partir de 3 parâmetros, (N, M,  K), os vértices serão distribuídos aleatoriamente por K grupos de diferentes tamanhos e as arestas serão usadas de forma a garantir a formação de um SCC em cada grupo, bem como para formar um Grafo Acíclico Direcionado entre tais grupos, o que mantém a quantidade de SCC’s esperada. Isso permite testar grafos de diferentes densidades controlando a quantidade de componentes fortemente conectados.
+
 ---
 
 # Experimento
