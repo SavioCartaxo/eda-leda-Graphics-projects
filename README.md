@@ -396,41 +396,67 @@ Isolamento de recursos, reprodutibilidade entre máquinas e condições idêntic
 
 Para os experimentos com grafos aleatórios controlados, foram consideradas combinações entre três níveis de densidade: baixa (M = 2N), média (M = 5N) e alta (M = 10N); e três categorias de quantidade de SCCs: poucos (K = 3), moderada (K = N/10) e muitos (K = N/3).
 
-![baixa_pouco](README_IMAGES/tarjan_kosaraju_baixa_pouco.png)
-*Grafo com baixa densidade (M = 2N) e poucos SCCs (K = 3).*
+<p align="center">
+  <img src="README_IMAGES/tarjan_kosaraju_baixa_pouco.png">
+  <br>
+  <em>Grafo com baixa densidade (M = 2N) e poucos SCCs (K = 3).</em>
+</p>
 
 
----imagem do grafico baixo_medio---
-*Grafo com baixa densidade (M = 2N) e quantidade moderada de SCCs (K = N/10).*
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_baixa_medios.png">
+  <br>
+  <em>Grafo com baixa densidade (M = 2N) e quantidade moderada de SCCs (K = N/10).</em>
+</p>
+
+
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_baixa_muitos.png">
+  <br>
+  <em>Grafo com baixa densidade (M = 2N) e muitos SCCs (K = N/3).</em>
+</p>
+
+
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_media_poucos.png">
+  <br>
+  <em>Grafo com densidade média (M = 5N) e poucos SCCs (K = 3).</em>
+</p>
+
+
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_media_medios.png">
+  <br>
+  <em>Grafo com densidade média (M = 5N) e quantidade moderada de SCCs (K = N/10).</em>
+</p>
+
+
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_media_muitos.png">
+  <br>
+  <em>Grafo com densidade média (M = 5N) e muitos SCCs (K = N/3).</em>
+</p>
+
+
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_alta_poucos.png">
+  <br>
+  <em>Grafo com alta densidade (M = 10N) e poucos SCCs (K = 3).</em>
+</p>
 
 
 
----imagem do grafico baixo_muitos---
-*Grafo com baixa densidade (M = 2N) e muitos SCCs (K = N/3).*
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_alta_medios.png">
+  <br>
+  <em>Grafo com alta densidade (M = 10N) e quantidade moderada de SCCs (K = N/10).</em>
+</p>
 
-
-
----imagem do grafico medio_poucos---
-*Grafo com densidade média (M = 5N) e poucos SCCs (K = 3).*
-
-
----imagem do grafico medio-medio---
-*Grafo com densidade média (M = 5N) e quantidade moderada de SCCs (K = N/10).*
-
-
----imagem do grafico medio-muitos---
-*Grafo com densidade média (M = 5N) e muitos SCCs (K = N/3).*
-
-
----imagem do grafico alto_poucos---
-*Grafo com alta densidade (M = 10N) e poucos SCCs (K = 3).*
-
-
----imagem do grafico alto_medio---
-*Grafo com alta densidade (M = 10N) e quantidade moderada de SCCs (K = N/10).*
-
----imagem do grafico alto_muitos---
-*Grafo com alta densidade (M = 10N) e muitos SCCs (K = N/3).*
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_alta_muitos.png">
+  <br>
+  <em>Grafo com alta densidade (M = 10N) e muitos SCCs (K = N/3).</em>
+</p>
 
 Ao analisar os gráficos, observa-se que o comportamento de ambos os algoritmos está dentro do esperado para a complexidade O(V + E), com o tempo de execução crescendo de forma consistente conforme o aumento da entrada. O Tarjan se mostrou consistentemente mais rápido que o Kosaraju em todos os cenários testados, com a diferença se acentuando conforme a entrada cresce. Para entradas de N = 10⁶, o Tarjan chegou a ser de 2x a 3x mais rápido que o Kosaraju, com a diferença sendo mais expressiva nos casos de maior densidade de arestas.
 
@@ -453,7 +479,12 @@ A Tabela apresenta o tempo de execução (em milissegundos) dos algoritmos de Ko
 
 ## Resultados do experimento de memória
 
----grafico ou tabela da comparação de memoria---
+| Entrada | Kosaraju cíclico (MB) | Tarjan cíclico (MB) | Kosaraju linear (MB) | Tarjan linear (MB) |
+|---------|----------------------|---------------------|----------------------|--------------------|
+| 10³     | 0                    | 0                   | 1                    | 0                  |
+| 10⁴     | 3                    | 1                   | 4                    | 1                  |
+| 10⁵     | 20                   | 8                   | 28                   | 15                 |
+| 10⁶     | 211                  | 92                  | 294                  | 169                |
 
 Os resultados de uso de memória confirmam a diferença teórica entre os dois algoritmos. O Tarjan, por realizar apenas uma busca em profundidade e utilizar exclusivamente estruturas auxiliares de tamanho proporcional ao número de vértices (como os arrays de ids, low e onStack, além da pilha) possui complexidade de espaço O(V). O Kosaraju, na implementação utilizada, constrói explicitamente o grafo transposto em memória, o que adiciona uma estrutura de tamanho proporcional a V + E, resultando em complexidade de espaço O(V + E). É importante destacar que essa não é uma limitação inerente ao algoritmo de Kosaraju em si, pois existem variações que evitam a construção explícita do transposto, reduzindo o uso de memória para O(V), porém à custa de maior complexidade de implementação.
 
@@ -588,6 +619,8 @@ Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é super
 
 - [CP-Algorithms](https://cp-algorithms.com/graph/strongly-connected-components.html)
 - [Graph-editor](https://csacademy.com/app/graph_editor/)
+- [Wikipedia](https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm)
+- [IME-USP](https://www.ime.usp.br/~pf/algoritmos_para_grafos/aulas/kosaraju.html)
 
 ---
 
