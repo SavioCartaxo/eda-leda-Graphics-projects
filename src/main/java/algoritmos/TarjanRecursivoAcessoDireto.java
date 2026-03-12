@@ -73,7 +73,7 @@ public class TarjanRecursivoAcessoDireto {
         onStack[u] = true;
 
         for (Node vNode : adj[u]) {
-            int v = vNode.getValue(); // índice direto, sem mapa
+            int v = vNode.getIdNormalizado(); // índice direto, sem mapa
 
             if (ids[v] == UNVISITED) {
                 // Tree-edge: desce na DFS e propaga o low de volta
