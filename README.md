@@ -352,7 +352,8 @@ Portanto, todo o grafo forma uma única Componente Fortemente Conectada (SCC), i
 
 ## Geração de Grafo Aleatório
 
-Grafos Aleatórios Controlados (Controlled Random Graphs),  grafos gerados da seguinte forma: a partir de 3 parâmetros, (N, M,  K), os vértices serão distribuídos aleatoriamente por K grupos de diferentes tamanhos e as arestas serão usadas de forma a garantir a formação de um SCC em cada grupo, bem como para formar um Grafo Acíclico Direcionado entre tais grupos, o que mantém a quantidade de SCC’s esperada. Isso permite testar grafos de diferentes densidades controlando a quantidade de componentes fortemente conectados.
+Para a realização dos experimentos, foi utilizado um script responsável por gerar automaticamente grafos direcionados com estrutura aleatória controlada. Nesse tipo de grafo, a geração é definida a partir de três parâmetros (N, M, K), onde os vértices são distribuídos aleatoriamente em K grupos de diferentes tamanhos. As arestas são utilizadas de forma a garantir a formação de uma SCC em cada grupo, bem como a formação de um Grafo Acíclico Direcionado entre os grupos, mantendo assim a quantidade de SCCs esperada. Isso permite testar grafos de diferentes densidades controlando o número de componentes fortemente conectadas.
+Para os experimentos, serão considerados valores de N = 10², 10³, 10⁴, 10⁵ e 10⁶. Os valores de M variam conforme a densidade do grafo: para grafos esparsos, M = 2N; para grafos moderadamente densos, M = 5N; para grafos densos, M = 10N. Os valores de K são definidos de forma a variar a quantidade de componentes, sendo K = 3 para poucos SCCs, K = N/10 para uma quantidade moderada e K = N/3 para muitos SCCs pequenos.
 
 ---
 
@@ -360,24 +361,8 @@ Grafos Aleatórios Controlados (Controlled Random Graphs),  grafos gerados da se
 
 A experimentação compara o desempenho do algoritmo de Kosaraju com o de Tarjan para análise de tempo de execução e uso de memória. Ambos os algoritmos possuem complexidade de tempo O(V + E), onde V é o número de vértices e E o número de arestas do grafo, porém diferem significativamente em sua abordagem: o Tarjan realiza apenas uma busca em profundidade enquanto o Kosaraju realiza duas, além de construir explicitamente o grafo transposto em memória, resultando em complexidade de espaço O(V + E) contra O(V) do Tarjan. Essa diferença estrutural, embora invisível na notação assintótica, tem impacto direto no desempenho prático dos algoritmos, especialmente para entradas grandes.
 
-Os grafos foram gerados com entradas de tamanho 10², 10³, 10⁴, 10⁵ e 10⁶ vértices e arestas. Cada configuração foi executada 20 vezes por algoritmo, e o tempo médio de execução foi obtido utilizando System.currentTimeMillis() antes e após cada chamada, com o resultado expresso em milissegundos. A média de 20 execuções foi utilizada para reduzir o impacto de variações pontuais causadas por fatores externos, como garbage collection da JVM e variações de escalonamento do sistema operacional.
+Os grafos foram gerados com entradas de N = 10² até N = 10⁶ vértices, com o número de arestas variando conforme o tipo de grafo — fixo para os casos linear e cíclico, e proporcional a N para os grafos aleatórios controlados.
 O experimento foi realizado em uma máquina com as seguintes especificações:
-
-# Uso do Docker no Projeto de Benchmark SCC
-
-## Motivação
-
-Para comparar algoritmos de SCC de forma cientificamente válida, é essencial que todos os testes rodem em um ambiente controlado e reproduzível. Sem Docker, fatores como versão do Java, configurações do sistema operacional e diferenças entre as máquinas dos membros do grupo comprometeriam a consistência dos resultados.
-
-O Docker resolve isso empacotando o código, o compilador e o ambiente de execução em uma imagem isolada — garantindo que o benchmark rode da mesma forma em qualquer máquina.
-
-## Implementação
-
-A imagem base `maven:3.9-eclipse-temurin-21` já inclui Java 21 e Maven, eliminando dependências locais. O `Dockerfile.java` compila o projeto no build e define a JVM com `-Xss512m` para suportar a recursão profunda dos algoritmos recursivos.
-
-Cada algoritmo é um serviço independente no `docker-compose.yml`, com limites de memória e CPU fixos e iguais para todos — reserva igual ao limite garante recursos sempre disponíveis, tornando a comparação justa. Dois volumes são mapeados: `inputs` para os grafos gerados pelo Python e `resultados` para os CSVs gerados pelo Java.
-
-O script `benchmark.sh` usa `docker compose run --rm`, criando e removendo o container a cada execução sem acumular estado entre testes. O build é feito uma única vez, reutilizando cache do Docker quando o código não muda.
 
 ## Especificações da Máquina
 
@@ -388,9 +373,69 @@ O script `benchmark.sh` usa `docker compose run --rm`, criando e removendo o con
 | Memória disponível | 8 GB |
 | Ambiente de execução | Container Docker |
 
-![baixa_pouco](README_IMAGES/tarjan_kosaraju_baixa_pouco.png)
+## Uso do Docker no Projeto de Benchmark SCC 
 
-## Resultados
+### Motivação
+
+Para comparar algoritmos de SCC de forma cientificamente válida, é essencial que todos os testes rodem em um ambiente controlado e reproduzível. Sem Docker, fatores como versão do Java, configurações do sistema operacional e diferenças entre as máquinas dos membros do grupo comprometeriam a consistência dos resultados.
+
+O Docker resolve isso empacotando o código, o compilador e o ambiente de execução em uma imagem isolada, garantindo que o benchmark rode da mesma forma em qualquer máquina.
+
+### Implementação
+
+A imagem base `maven:3.9-eclipse-temurin-21` já inclui Java 21 e Maven, eliminando dependências locais. Cada algoritmo é um serviço independente no `docker-compose.yml`, com limites de memória e CPU fixos e iguais para todos, tornando a comparação justa. O script `benchmark.sh` usa `docker compose run --rm`, criando e removendo o container a cada execução sem acumular estado entre testes.
+
+Para a medição de memória, um container por execução é necessário. No benchmark de tempo todos os Ns rodam no mesmo processo, o que é eficiente mas impede medir o uso de memória (heap) de forma confiável, pois o coletor de lixo da JVM (Garbage Collector) não libera memória de forma determinística entre execuções. O `benchmark_memoria.sh` com seu `docker-compose.memoria.yml` dedicado resolve isso subindo um processo Java limpo para cada medição.
+
+### Resultado
+
+Isolamento de recursos, reprodutibilidade entre máquinas e condições idênticas de execução - tornando os resultados confiáveis tanto para tempo quanto para memória.
+
+
+## Resultados de tempo para gráficos aleatórios controlados
+
+Para os experimentos com grafos aleatórios controlados, foram consideradas combinações entre três níveis de densidade: baixa (M = 2N), média (M = 5N) e alta (M = 10N); e três categorias de quantidade de SCCs: poucos (K = 3), moderada (K = N/10) e muitos (K = N/3).
+
+![baixa_pouco](README_IMAGES/tarjan_kosaraju_baixa_pouco.png)
+*Grafo com baixa densidade (M = 2N) e poucos SCCs (K = 3).*
+
+
+---imagem do grafico baixo_medio---
+*Grafo com baixa densidade (M = 2N) e quantidade moderada de SCCs (K = N/10).*
+
+
+
+---imagem do grafico baixo_muitos---
+*Grafo com baixa densidade (M = 2N) e muitos SCCs (K = N/3).*
+
+
+
+---imagem do grafico medio_poucos---
+*Grafo com densidade média (M = 5N) e poucos SCCs (K = 3).*
+
+
+---imagem do grafico medio-medio---
+*Grafo com densidade média (M = 5N) e quantidade moderada de SCCs (K = N/10).*
+
+
+---imagem do grafico medio-muitos---
+*Grafo com densidade média (M = 5N) e muitos SCCs (K = N/3).*
+
+
+---imagem do grafico alto_poucos---
+*Grafo com alta densidade (M = 10N) e poucos SCCs (K = 3).*
+
+
+---imagem do grafico alto_medio---
+*Grafo com alta densidade (M = 10N) e quantidade moderada de SCCs (K = N/10).*
+
+---imagem do grafico alto_muitos---
+*Grafo com alta densidade (M = 10N) e muitos SCCs (K = N/3).*
+
+Ao analisar os gráficos, observa-se que o comportamento de ambos os algoritmos está dentro do esperado para a complexidade O(V + E), com o tempo de execução crescendo de forma consistente conforme o aumento da entrada. O Tarjan se mostrou consistentemente mais rápido que o Kosaraju em todos os cenários testados, com a diferença se acentuando conforme a entrada cresce. Para entradas de N = 10⁶, o Tarjan chegou a ser de 2x a 3x mais rápido que o Kosaraju, com a diferença sendo mais expressiva nos casos de maior densidade de arestas.
+
+
+## Resultados de tempo do experimento de grafos cíclicos e lineares
 
 Isolamento de recursos, reprodutibilidade entre máquinas e condições idênticas de execução para todos os algoritmos — tornando os resultados do benchmark confiáveis e comparáveis.
 
@@ -406,8 +451,16 @@ A Tabela apresenta o tempo de execução (em milissegundos) dos algoritmos de Ko
 
 ---
 
-# Análise de Implementação Recursiva do Algoritmo de Tarjan
-## Investigação de Performance
+## Resultados do experimento de memória
+
+---grafico ou tabela da comparação de memoria---
+
+Os resultados de uso de memória confirmam a diferença teórica entre os dois algoritmos. O Tarjan, por realizar apenas uma busca em profundidade e utilizar exclusivamente estruturas auxiliares de tamanho proporcional ao número de vértices (como os arrays de ids, low e onStack, além da pilha) possui complexidade de espaço O(V). O Kosaraju, na implementação utilizada, constrói explicitamente o grafo transposto em memória, o que adiciona uma estrutura de tamanho proporcional a V + E, resultando em complexidade de espaço O(V + E). É importante destacar que essa não é uma limitação inerente ao algoritmo de Kosaraju em si, pois existem variações que evitam a construção explícita do transposto, reduzindo o uso de memória para O(V), porém à custa de maior complexidade de implementação.
+
+Em ambos os tipos de grafo testados, o consumo de memória de ambos os algoritmos cresce conforme o esperado à medida que a entrada aumenta, com o Tarjan consistentemente utilizando menos memória que o Kosaraju. Essa diferença se torna mais expressiva para entradas grandes, refletindo diretamente o impacto da construção do grafo transposto no consumo de memória do Kosaraju.
+
+## Análise de Implementação Recursiva do Algoritmo de Tarjan
+### Investigação de Performance
 
 Originalmente o algoritmo Tarjan e o algoritmo Kosaraju seriam implementados de forma recursiva, essa ideia foi descartada devido a alguns motivos, um deles é que a profundidade da pilha de recursão poderia afetar significativamente o desempenho e o uso de memória, especialmente em grafos que induzem cadeias longas de chamadas recursivas. Outro motivo foi um comportamento inesperado observado ao implementar o Tarjan recursivo em duas variações diferentes, discutido nas seções seguintes.
 
@@ -534,6 +587,7 @@ Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é super
 # Referências
 
 - [CP-Algorithms](https://cp-algorithms.com/graph/strongly-connected-components.html)
+- [Graph-editor](https://csacademy.com/app/graph_editor/)
 
 ---
 
