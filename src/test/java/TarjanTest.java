@@ -1,10 +1,9 @@
-package test.java;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import main.java.algoritmos.Node;
-import main.java.algoritmos.Tarjan;
+import algoritmos.Node;
+import algoritmos.Tarjan;
+import util.InputFormatter;
 
 /*
  Para testar o algoritmo, execute os seguintes comandos na raiz do projeto:
@@ -31,7 +30,7 @@ public class TarjanTest {
 
         Tarjan tj = new Tarjan();
         long startTime = System.currentTimeMillis(); // tempo inicial
-        int count = tj.scc(grafo).size();
+        int count = tj.findSCCs(grafo).size();
         long endTime = System.currentTimeMillis();   // tempo final
 
         System.out.println("Quantidade de SCC's: " + count);

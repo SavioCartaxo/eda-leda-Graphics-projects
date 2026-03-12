@@ -8,9 +8,8 @@ entrada, especificamente para N = 10^2, 10^3, 10^4, 10^5 e 10^6 (com K = N),
 permitindo avaliar o comportamento e a eficiência do algoritmo em volumes
 crescentes de dados.
 """
-def generate_cycle_graph(N, K):
-    if K != N:
-        raise ValueError("Para um ciclo simples, K deve ser igual a N.")
+def generate_cycle_graph(N):
+    K = N
 
     print(f"{N} {K}")
 
@@ -32,5 +31,4 @@ python scripts/generate_inputs/script_cycle_graph.py 1000000 1000000 > input.txt
 """
 if __name__ == "__main__":
     N = int(sys.argv[1])
-    K = int(sys.argv[2])
-    generate_cycle_graph(N, K)
+    generate_cycle_graph(N)

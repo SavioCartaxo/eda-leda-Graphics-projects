@@ -1,4 +1,4 @@
-package main.java.algoritmos;
+package algoritmos;
 
 import java.util.Deque;
 import java.util.ArrayDeque;
@@ -40,7 +40,8 @@ public class Kosaraju {
 		// Parte 1: DFS no grafo original
 		for (Node no : grafo) {
 			if (!visitados[no.getIdNormalizado()]) {
-				dfs1(no, pilha, visitados);
+				recursiveDfs1(no, pilha, visitados);
+				//dfs1(no, pilha, visitados);
 			}
 		}
 
@@ -66,7 +67,8 @@ public class Kosaraju {
 
 			if (!visitados2[node.getIdNormalizado()]) {
 				ArrayList<Integer> scc = new ArrayList<>();
-				dfs2(node, grafoInvertido, visitados2, scc);
+				recursiveDfs2(node, grafoInvertido, visitados2, scc);
+				//dfs2(node, grafoInvertido, visitados2, scc);
 				SCCs.add(scc);
 			}
 		}

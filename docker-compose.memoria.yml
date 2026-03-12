@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  memoria-tarjan:
+    build:
+      context: .
+      dockerfile: Dockerfile.memoria.java
+    container_name: bench_memoria_tarjan
+    volumes:
+      - ./inputs:/app/inputs
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+          cpus: "6.0"
+        reservations:
+          memory: 8g
+          cpus: "6.0"
+
+  memoria-kosaraju:
+    build:
+      context: .
+      dockerfile: Dockerfile.memoria.java
+    container_name: bench_memoria_kosaraju
+    volumes:
+      - ./inputs:/app/inputs
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+          cpus: "6.0"
+        reservations:
+          memory: 8g
+          cpus: "6.0"

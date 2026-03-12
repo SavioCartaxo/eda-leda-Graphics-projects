@@ -1,10 +1,10 @@
-package test.java;
+package util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import main.java.algoritmos.Node;
+import algoritmos.Node;
 
 public class InputFormatter {
 
