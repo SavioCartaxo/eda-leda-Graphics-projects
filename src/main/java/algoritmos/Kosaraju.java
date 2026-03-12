@@ -87,25 +87,22 @@ public class Kosaraju {
 	 */
 	private void dfs1(Node node, Deque<Node> pilha, boolean[] visitados) {
 		Deque<Node> pilhaAuxiliar = new ArrayDeque<>();
-		Deque<Node> ordem = new ArrayDeque<>();
 		pilhaAuxiliar.addLast(node);
 
 		while (!pilhaAuxiliar.isEmpty()) {
-			Node atual = pilhaAuxiliar.removeLast();
+			Node atual = pilhaAuxiliar.peekLast();
+
 			if (!visitados[atual.getIdNormalizado()]) {
 				visitados[atual.getIdNormalizado()] = true;
-				ordem.addLast(atual);
-
 				for (Node vizinho : atual.getConnections()) {
 					if (!visitados[vizinho.getIdNormalizado()]) {
 						pilhaAuxiliar.addLast(vizinho);
 					}
 				}
+			} else {
+				pilhaAuxiliar.removeLast();
+				pilha.addLast(atual);
 			}
-		}
-		
-		while (!ordem.isEmpty()) {
-			pilha.addLast(ordem.removeLast());
 		}
 	}
 

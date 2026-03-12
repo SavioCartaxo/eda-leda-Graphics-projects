@@ -9,6 +9,21 @@ import algoritmos.Kosaraju;
 import algoritmos.Node;
 import algoritmos.Tarjan;
 
+/**
+ * Conjunto de testes automatizados para validar os algoritmos
+ * de Tarjan e Kosaraju na detecção de Componentes Fortemente
+ * Conectadas (SCC).
+ *
+ * Os grafos são gerados automaticamente com parâmetros
+ * controlados (número de vértices, arestas e SCCs) usando
+ * {@link GraphGenerator}. Cada teste verifica se o número
+ * de SCCs encontrado pelo algoritmo corresponde ao esperado.
+ *
+ * Para executar no terminal use:
+ * javac -cp "lib\junit-platform-console-standalone-1.9.3.jar; src" -d out (Get-ChildItem -Recurse src -Filter *.java).FullName
+ * java -jar lib\junit-platform-console-standalone-1.9.3.jar -cp out --scan-classpath
+ *  
+ */
 public class TestControlledGraph {
 
     @Test
