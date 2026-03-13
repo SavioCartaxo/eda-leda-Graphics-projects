@@ -14,7 +14,6 @@ public class DepthFirstSearch {
 		if (initialNode == null) return;
 		Deque<Node> stack = new LinkedList<>();
 		stack.push(initialNode);
-		ArrayList<Integer> list = new ArrayList<>();
 		
 		while(!stack.isEmpty()){
 			Node current = stack.pop();
