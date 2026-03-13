@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Versão recursiva com acesso direto via Node normalizado.
  * Complexidade: O(V + E)
  */
-public class TarjanRecursivoAcessoDireto {
+public class TarjanRecursivo {
 
     private static final int UNVISITED = -1;
 
