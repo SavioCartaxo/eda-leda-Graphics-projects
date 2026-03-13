@@ -1,10 +1,9 @@
-package testes;
+package util;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import algoritmos.Node;
-import util.InputFormatter;
 
 /**
  * Gera grafos direcionados para testes automatizados de SCC.

@@ -6,9 +6,9 @@
 
 - [O que é um grafo?](#o-que-é-um-grafo)
 
-- [DFS](#depth-first-search)
+- [DFS](#depth-first-search-dfs)
 
-- [Componentes Fortemente Conectados](#componentes-fortemente-conectados)
+- [Componentes Fortemente Conectados](#componentes-fortemente-conectados-sccs)
 
 - [Algoritmo de Kosaraju](#algoritmo-de-kosaraju)
 
@@ -19,6 +19,8 @@
 - [Experimento](#experimento)
 
 - [Ambiente isolado com Docker](#uso-do-docker-no-projeto-de-benchmark-scc)
+
+- [Conclusão](#conclusão)
 
 - [Referências](#referências)
 
@@ -43,19 +45,32 @@ Para a visualização dos dados, utilizou-se a biblioteca *Matplotlib* na lingua
 
 ---
 
+### Estrutura geral do projeto
+
+O projeto está organizado nos seguintes diretórios:
+
+```
+scc-graph-project
+├───docker
+├───lib
+├───scripts
+└───src
+```
+
 ### Diretório src
 
 ```
 src
 ├───main
 │   └───java
-│       ├───algoritmos
-│       └───util
+│       └───algoritmos
 └───test
     └───java
+        ├───testes
+        └───util
 ```
 
-O diretório `src` contém as implementações, em **Java**, dos algoritmos **Kosaraju** e **Tarjan**. Também está presente o diretório `test`, responsável pelas classes de teste do projeto.
+O diretório `src` contém as implementações, em **Java**, dos algoritmos **Kosaraju** e **Tarjan**, dentre outros auxiliares. Também está presente o diretório `test`, responsável pelas classes de teste do projeto.
 
 ### Diretório scripts
 
@@ -67,8 +82,9 @@ scripts
 
 O diretório `scripts` reúne os scripts desenvolvidos em **Python** utilizados no suporte aos experimentos realizados no projeto. Nele estão incluídos os scripts responsáveis pela **geração automática das entradas (workloads)** utilizadas nos testes e também os scripts encarregados da **geração de gráficos** a partir dos resultados obtidos, utilizando a biblioteca **Matplotlib**.
 
-# Introdução teórica
+<br>
 
+# Introdução teórica
 
 ### O que é um grafo?
 
@@ -100,9 +116,9 @@ Agora imagine que as vias possuem sentido único, ou seja, há apenas uma direç
   <em>Figura 1.2</em>
 </p>
 
-## Depth First Search
+## Depth First Search (DFS)
  
-Se é preciso encontrar uma informação específica, há de se ter uma forma de procurá-la sistematicamente no grafo, o que muitas vezes envolve olhar todos os seus vértices até que isso seja possível. Nesse sentido, há dois algoritmos bem conhecidos, [depth first search](src/main/java/algoritmos/DepthFirstSearch.java) e **breadth first search**, ambos percorrem todos os vértices, mas em ordens diferentes. Como neste trabalho tratamos de algoritmos baseados no **depth first search** (também chamado de **DFS**), apenas trataremos dele.
+Se é preciso encontrar uma informação específica, há de se ter uma forma de procurá-la sistematicamente no grafo, o que muitas vezes envolve olhar todos os seus vértices até que isso seja possível. Nesse sentido, há dois algoritmos bem conhecidos, [depth first search](src/main/java/algoritmos/DepthFirstSearch.java) e **breadth first search** (BFS), ambos percorrem todos os vértices, mas em ordens diferentes. Como neste trabalho tratamos de algoritmos baseados no **depth first search** (também chamado de **DFS**), apenas trataremos dele.
 
 No *depth first search*, procuramos o mais fundo possível no grafo. Esse algoritmo explora um caminho e segue por ele até que não seja mais possível avançar, e então retorna para o vértice de início e explora outro caminho ainda inexplorado, similar a explorar um labirinto sempre por um único caminho de corredores até o fim e, após isso, retornar ao ponto de início para fazer o mesmo por outro caminho, caso esse exista.
  
@@ -116,24 +132,32 @@ Na figura 1.3, que se trata de um grafo direcionado, tomando o vértice A como o
 
 ---
 
-## Componentes Fortemente Conectados
+## Componentes Fortemente Conectados (SCCs)
 
-Em um grafo dirigido G, diz-se que ele é fortemente conectado quando, para todo par de vértices u e v, existe um caminho de u até v e, ao mesmo tempo, um caminho de v até u. Em outras palavras, qualquer vértice pode ser alcançado a partir de qualquer outro.
+Em um grafo direcionado G, diz-se que ele é fortemente conectado quando, para todo par de vértices u e v, existe um caminho de u até v e, ao mesmo tempo, um caminho de v até u. Em outras palavras, qualquer vértice pode ser alcançado a partir de qualquer outro.
 
-No entanto, um grafo dirigido pode não ser fortemente conectado como um todo. Nesse caso, a forte conectividade pode ocorrer em apenas partes do grafo. Dizemos que dois vértices u e v são fortemente conectados entre si quando existe um caminho de u até v e outro de v até u, mesmo que u = v. Assim, mesmo que G não seja fortemente conectado, ele pode ser decomposto em subconjuntos de vértices nos quais, internamente, todo par u e v é mutuamente alcançável. Cada um desses subconjuntos induz um subgrafo chamado **Componente Fortemente Conectado (CFC)** ou *Strongly Connected Components* (SCC) que será como iremos chamá-los. Essa ideia é melhor compreendida ao observar o exemplo:
+No entanto, um grafo direcionado pode não ser fortemente conectado como um todo. Nesse caso, a forte conectividade pode ocorrer em apenas partes do grafo. Dizemos que dois vértices u e v são fortemente conectados entre si quando existe um caminho de u até v e outro de v até u, mesmo que u = v. Assim, mesmo que G não seja fortemente conectado, ele pode ser decomposto em subconjuntos de vértices nos quais, internamente, todo par u e v é mutuamente alcançável. Cada um desses subconjuntos induz um subgrafo chamado **Componente Fortemente Conectado** ou **Strongly Connected Components (SCC)** que será como iremos chamá-los. Essa ideia é melhor compreendida ao observar o exemplo:
 
 <p align="center">
   <img src="README_IMAGES/img_example_SCC.png" alt="Exemplo de SCC">
   <br>
 </p>
 
+No exemplo acima, o grafo direcionado está dividido em 4 SCCs, destacados pelos círculos vermelhos. Em cada um desses grupos, todo vértice consegue alcançar qualquer outro vértice do mesmo grupo seguindo as direções das arestas.
+
+Observe que o grafo completo não é fortemente conectado em si, pois não existe necessariamente um caminho entre todos os pares de vértices do grafo. Ainda assim, ele pode ser decomposto em subconjuntos de vértices nos quais a forte conectividade é preservada internamente - esses subconjuntos são justamente as SCCs.
+
+Além disso, vale destacar que vértices isolados ou que não formam ciclos com outros vértices, como o vértice "8" do exemplo, também são considerados componentes fortemente conectados, pois, trivialmente, existe um caminho de um vértice para ele mesmo.
+
+<br>
+
 ---
 
 # Algoritmo de Kosaraju
 
-### Visão Geral
+## Visão Geral
 
-O algoritmo de Kosaraju, também conhecido como algoritmo Kosaraju-Sharir, é um algoritmo que encontra componentes fortemente conectados (SCC) de um grafo direcionado em tempo linear O(V + E) quando representado por lista de adjacência, onde V é o número de vértices (ou nós) e E o número de arestas do grafo. 
+O algoritmo de Kosaraju, também conhecido como algoritmo Kosaraju-Sharir, é um algoritmo que encontra componentes fortemente conectados (SCC) de um grafo direcionado em tempo linear O(V + E) quando representado por lista de adjacência, onde **V** é o número de vértices (ou nós) e **E** o número de arestas do grafo. 
 
 A implementação utilizada constrói explicitamente o grafo transposto em memória, o que usa espaço adicional O(V + E), mas simplifica a implementação e o entendimento em relação a abordagens que evitam essa construção explícita. A ideia é usar busca em profundidade duas vezes, fazendo uso da propriedade de que um grafo e seu transposto possuem exatamente os mesmos SCCs.
 
@@ -222,12 +246,16 @@ Temos os SCCs {9}, {4, 5, 6} e {1, 2, 3}.
 
 O conceito é simples e o Kosaraju é eficiente; no entanto, não é mais eficiente que outros algoritmos que encontram SCCs, como o Tarjan, que, embora tenha uma complexidade de tempo assintoticamente igual à do Kosaraju, realiza apenas uma busca em profundidade, ao invés de duas, levando-o a ser mais rápido na prática.
 
+
+<br><br>
+
 ---
 
 # Algoritmo de Tarjan
-### Visão Geral
 
-Dado um grafo direcionado, queremos identificar quais conjuntos de vértices estão conectados de forma que todos conseguem alcançar todos os outros. O algoritmo de Tarjan resolve esse problema encontrando todas as Componentes Fortemente Conectadas (SCCs) utilizando apenas uma busca em profundidade (DFS), com complexidade linear O(V + E). A ideia central é detectar, durante a própria DFS, quando um grupo de vértices forma um ciclo fechado, sem precisar realizar múltiplas passagens pelo grafo.
+## Visão Geral
+
+Dado um grafo direcionado, queremos identificar quais conjuntos de vértices estão conectados de forma que todos conseguem alcançar todos os outros. Assim como o Kosaraju, o algoritmo de Tarjan resolve esse problema encontrando todas as Componentes Fortemente Conectadas (SCCs), porém utilizando apenas uma busca em profundidade (DFS), com complexidade linear O(V + E). A ideia central é detectar, durante a própria DFS, quando um grupo de vértices forma um ciclo fechado, sem precisar realizar múltiplas passagens pelo grafo.
 
 ### Ideia do Algoritmo
 
@@ -344,6 +372,8 @@ Todos os nodes foram visitados. SCCs encontrados: **{1, 2}** e **{3}**.
 
 O node 3 forma um SCC sozinho pois, apesar de alcançar o node 1, não há caminho de volta até ele, ou seja, não há ciclo envolvendo o node 3.
 
+<br>
+
 ---
 
 # Scripts
@@ -378,7 +408,7 @@ Portanto, todo o grafo forma uma única Componente Fortemente Conectada (SCC), i
 
 ## Geração de Grafo Aleatório
 
-Sem dúvidas, uma questão importante do trabalho a ser respondida foi "Como gerar grafos generalizados e randômicos para tais algoritmos sem perder o controle de suas estruturas?" e o princípio de controlled random graph (grafo aleatório controlado) foi o caminho encontrado; consiste em gerar grafos randômicos com propriedades estruturais customizadas e controladas. Nesse projeto, isso se traduziu como uma maneira de gerar grafos com uma quantidade específica de SCCs, vértices e arestas, mesmo que mantendo uma certa aleatoriedade.
+Sem dúvidas, uma questão importante do trabalho a ser respondida foi "Como gerar grafos generalizados e randômicos para tais algoritmos sem perder o controle de suas estruturas?" e o princípio de **controlled random graph** (grafo aleatório controlado) foi o caminho encontrado; consiste em gerar grafos randômicos com propriedades estruturais customizadas e controladas. Nesse projeto, isso se traduziu como uma maneira de gerar grafos com uma quantidade específica de SCCs, vértices e arestas, mesmo que mantendo uma certa aleatoriedade.
 
 Em mais detalhes, foi feito um script responsável por gerar grafos direcionados a partir de três parâmetros: N, M e K, representando o número de vértices, arestas e SCCs, respectivamente. Todos os vértices são distribuídos randomicamente em K grupos, e dentro de cada grupo os vértices são ligados de maneira a formar um ciclo, garantindo que cada grupo seja um SCC isolado, identificado por um número inteiro como ID. Para completar as M arestas restantes, são sorteados pares de vértices aleatoriamente, com a condição de que uma aresta só pode ir do grupo de ID menor para o de ID maior. Isso gera um Grafo Acíclico Dirigido entre os grupos, garantindo que nenhum SCC isolado seja desfeito.
 
@@ -412,7 +442,7 @@ O Docker resolve isso empacotando o código, o compilador e o ambiente de execu�
 
 ### Implementação
 
-A imagem base `maven:3.9-eclipse-temurin-21` já inclui Java 21 e Maven, eliminando dependências locais. Cada algoritmo é um serviço independente no `docker-compose.yml`, com limites de memória e CPU fixos e iguais para todos, tornando a comparação justa. O script `benchmark.sh` usa `docker compose run --rm`, criando e removendo o container a cada execução sem acumular estado entre testes.
+A imagem base `maven:3.9-eclipse-temurin-21` já inclui Java 21 e Maven, eliminando dependências locais. Cada algoritmo é um serviço independente no [docker-compose.yml](docker-compose.yml), com limites de memória e CPU fixos e iguais para todos, tornando a comparação justa. O script [benchmark.sh](benchmark.sh) usa `docker compose run --rm`, criando e removendo o container a cada execução sem acumular estado entre testes.
 
 Para a medição de memória, um container por execução é necessário. No benchmark de tempo todos os Ns rodam no mesmo processo, o que é eficiente mas impede medir o uso de memória (heap) de forma confiável, pois o coletor de lixo da JVM (Garbage Collector) não libera memória de forma determinística entre execuções. O `benchmark_memoria.sh` com seu `docker-compose.memoria.yml` dedicado resolve isso subindo um processo Java limpo para cada medição.
 
@@ -420,8 +450,33 @@ Para a medição de memória, um container por execução é necessário. No ben
 
 Isolamento de recursos, reprodutibilidade entre máquinas e condições idênticas de execução - tornando os resultados confiáveis tanto para tempo quanto para memória.
 
+---
 
-## Resultados de tempo para grafos aleatórios controlados
+## Resultado - tempo de execução para grafos cíclicos e lineares
+
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_teste_com_grafos_ciclicos.png">
+  <br>
+</p>
+
+<p align="center">
+  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_teste_com_grafos_lineares.png">
+  <br>
+</p>
+
+Os gráficos apresentam o tempo de execução dos algoritmos de Kosaraju e Tarjan para grafos cíclicos e lineares, com entradas variando de N = 10² até N = 10⁶ vértices.
+
+Em ambos os casos, o comportamento geral está dentro do esperado para a complexidade O(V + E), com o tempo de execução crescendo de forma consistente conforme o aumento da entrada, sem saltos abruptos. O Tarjan se mostrou consistentemente mais rápido que o Kosaraju ao longo de toda a faixa de entrada testada, com a diferença se tornando progressivamente mais expressiva conforme N cresce.
+
+Para entradas pequenas, a diferença entre os dois algoritmos é praticamente imperceptível, com ambos completando a execução em frações de milissegundo. À medida que a entrada cresce, a vantagem do Tarjan se acentua e para N = 10⁶, o Kosaraju leva aproximadamente o dobro do tempo do Tarjan em ambos os tipos de grafo, refletindo diretamente o custo das duas DFS e da construção explícita do grafo transposto.
+
+Vale observar que os dados apresentam alguma variação pontual, especialmente para entradas intermediárias, comportamento esperado em benchmarks de tempo, influenciado por fatores como o garbage collector da JVM e variações de escalonamento do sistema operacional. A tendência geral, no entanto, é clara e consistente com a análise teórica.
+
+<br>
+
+---
+
+## Resultado - tempo de execução para grafos aleatórios controlados
 
 Para os experimentos com grafos aleatórios controlados, foram consideradas combinações entre três níveis de densidade: baixa (M = 2N), média (M = 5N) e alta (M = 10N); e três categorias de quantidade de SCCs: muitos (K = N/3), moderada (K = N/10) e poucos (K = N/30).
 
@@ -484,27 +539,6 @@ Para os experimentos com grafos aleatórios controlados, foram consideradas comb
 Ao analisar os gráficos, observa-se que o comportamento de ambos os algoritmos está dentro do esperado para a complexidade O(V + E), com o tempo de execução crescendo de forma consistente conforme o aumento da entrada. O Tarjan se mostrou consistentemente mais rápido que o Kosaraju em todos os cenários testados, com a diferença se acentuando conforme a entrada cresce. Para entradas de N = 10⁶, o Tarjan chegou a ser de 2x a 3x mais rápido que o Kosaraju, com a diferença sendo mais expressiva nos casos de maior densidade de arestas.
 
 
-## Resultados de tempo do experimento de grafos cíclicos e lineares
-
-<p align="center">
-  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_teste_com_grafos_ciclicos.png">
-  <br>
-</p>
-
-<p align="center">
-  <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_teste_com_grafos_lineares.png">
-  <br>
-</p>
-
-Os gráficos apresentam o tempo de execução dos algoritmos de Kosaraju e Tarjan para grafos cíclicos e lineares, com entradas variando de N = 10² até N = 10⁶ vértices.
-
-Em ambos os casos, o comportamento geral está dentro do esperado para a complexidade O(V + E), com o tempo de execução crescendo de forma consistente conforme o aumento da entrada, sem saltos abruptos. O Tarjan se mostrou consistentemente mais rápido que o Kosaraju ao longo de toda a faixa de entrada testada, com a diferença se tornando progressivamente mais expressiva conforme N cresce.
-
-Para entradas pequenas, a diferença entre os dois algoritmos é praticamente imperceptível, com ambos completando a execução em frações de milissegundo. À medida que a entrada cresce, a vantagem do Tarjan se acentua e para N = 10⁶, o Kosaraju leva aproximadamente o dobro do tempo do Tarjan em ambos os tipos de grafo, refletindo diretamente o custo das duas DFS e da construção explícita do grafo transposto.
-
-Vale observar que os dados apresentam alguma variação pontual, especialmente para entradas intermediárias, comportamento esperado em benchmarks de tempo, influenciado por fatores como o garbage collector da JVM e variações de escalonamento do sistema operacional. A tendência geral, no entanto, é clara e consistente com a análise teórica.
-
-
 ## Resultados do experimento de memória
 
 | Entrada | Kosaraju cíclico (MB) | Tarjan cíclico (MB) | Kosaraju linear (MB) | Tarjan linear (MB) |
@@ -518,7 +552,11 @@ Os resultados de uso de memória confirmam a diferença teórica entre os dois a
 
 Em ambos os tipos de grafo testados, o consumo de memória de ambos os algoritmos cresce conforme o esperado à medida que a entrada aumenta, com o Tarjan consistentemente utilizando menos memória que o Kosaraju. Essa diferença se torna mais expressiva para entradas grandes, refletindo diretamente o impacto da construção do grafo transposto no consumo de memória do Kosaraju. Vale ressaltar que os grafos utilizados nos testes de memória são esparsos, com E ≈ V, o que representa o cenário mais favorável para o Kosaraju. Em grafos mais densos, onde E cresce em relação a V, o grafo transposto ocuparia proporcionalmente mais memória, acentuando ainda mais a diferença em relação ao Tarjan, que manteria seu consumo em O(V) independentemente da densidade do grafo.
 
-## Conclusão
+<br>
+
+---
+
+# Conclusão
 
 Os resultados obtidos confirmam o que a análise teórica já sugeria: embora Kosaraju e Tarjan compartilhem a mesma complexidade de tempo assintótica O(V + E), o Tarjan se mostrou consistentemente mais rápido em todos os cenários testados, para ambos os tipos de grafo e em todas as entradas analisadas.
 
@@ -528,7 +566,9 @@ Nos experimentos com grafos aleatórios controlados, a diferença se mostrou ain
 
 Vale destacar que os experimentos também revelaram um comportamento relevante relacionado à implementação recursiva: em grafos com ciclos longos, a profundidade da pilha de recursão impacta significativamente o desempenho, favorecendo a adoção da DFS iterativa para ambos os algoritmos. Com a DFS iterativa, o Tarjan passou a demonstrar sua vantagem de forma consistente, confirmando que a diferença de desempenho observada reflete genuinamente a diferença estrutural entre os algoritmos e não um artefato da implementação.
 
-Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é superior ao Kosaraju tanto em tempo quanto em memória na prática. A principal vantagem do Kosaraju reside na sua simplicidade conceitual e facilidade de implementação, pois a ideia de duas DFS com inversão do grafo é mais intuitiva do que o mecanismo de low-link values utilizado pelo Tarjan, o que justifica seu uso em contextos didáticos ou quando a clareza do código é prioritária em relação à performance.
+Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é superior ao Kosaraju tanto em desempenho quanto em uso de memória. A principal vantagem do Kosaraju reside na sua simplicidade conceitual e facilidade de implementação, pois a ideia de duas DFS com inversão do grafo é mais intuitiva do que o mecanismo de *low-link values* utilizado pelo Tarjan, o que justifica seu uso em contextos didáticos ou quando a clareza do código é prioritária em relação à performance.
+
+<br>
 
 ---
 
@@ -539,6 +579,8 @@ Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é super
 - [Wikipedia](https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm)
 - [IME-USP](https://www.ime.usp.br/~pf/algoritmos_para_grafos/aulas/kosaraju.html)
 - [Introduction to algorithms, CORMEN, Thomas H.](https://www.amazon.com.br/Introduction-Algorithms-Eastern-Economy-Thomas/dp/8120340078)
+
+<br>
 
 ---
 
@@ -553,5 +595,7 @@ Conclui-se portanto que, apesar da equivalência assintótica, o Tarjan é super
 - [@RenanAF18 - Savio Renan](https://github.com/RenanAF18)
 
 - [@SavioCartaxo - Savio Cartaxo](https://github.com/SavioCartaxo)
+
+<br>
 
 Projeto feito como trabalho final da disciplina de Estrutura de Dados e Algoritmos (EDA) e Laboratório de Estrutura de Dados e Algoritmos (LEDA) da graduação em Ciência da Computação na Universidade Federal de Campina Grande (UFCG) no período 2025.2.

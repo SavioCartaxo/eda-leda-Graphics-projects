@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import algoritmos.Kosaraju;
 import algoritmos.Node;
 import algoritmos.Tarjan;
+import util.GraphGenerator;
 
 /**
  * Conjunto de testes automatizados para validar os algoritmos
