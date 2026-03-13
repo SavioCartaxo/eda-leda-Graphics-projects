@@ -11,12 +11,8 @@
 #     ./benchmark.sh tarjan kosaraju linear
 #     ./benchmark.sh tarjan kosaraju cycle
 #
-#   Tarjan iterativo vs recursivo — apenas linear:
-#     ./benchmark.sh tarjan tarjan-recursivo
-#     ./benchmark.sh tarjan tarjan-recursivo-hash
-#
-#   Dois recursivos — linear automático:
-#     ./benchmark.sh tarjan-recursivo tarjan-recursivo-hash
+#   Tarjan iterativo vs recursivo — linear automatico:
+#     ./benchmark.sh tarjan tarjan-recursivo 
 # =============================================================
 
 set -e
@@ -26,12 +22,11 @@ set -e
 # -------------------------------------------------------------
 
 eh_recursivo() {
-  [[ "$1" == "tarjan-recursivo" || "$1" == "tarjan-recursivo-hash" ]]
+  [[ "$1" == "tarjan-recursivo" ]]
 }
 
 eh_valido() {
-  [[ "$1" == "tarjan" || "$1" == "kosaraju" || \
-     "$1" == "tarjan-recursivo" || "$1" == "tarjan-recursivo-hash" ]]
+  [[ "$1" == "tarjan" || "$1" == "kosaraju" || "$1" == "tarjan-recursivo" ]]
 }
 
 if [ "$#" -lt 2 ]; then
@@ -40,8 +35,6 @@ if [ "$#" -lt 2 ]; then
   echo "  ./benchmark.sh tarjan kosaraju linear"
   echo "  ./benchmark.sh tarjan kosaraju cycle"
   echo "  ./benchmark.sh tarjan tarjan-recursivo"
-  echo "  ./benchmark.sh tarjan tarjan-recursivo-hash"
-  echo "  ./benchmark.sh tarjan-recursivo tarjan-recursivo-hash"
   exit 1
 fi
 
@@ -55,29 +48,19 @@ if ! eh_valido "$ALGO2"; then
   echo "Erro: algoritmo invalido '$ALGO2'."; exit 1
 fi
 
-# Detecta modo: recursivo, linear, cycle ou controlado
-# Mistura de recursivo com iterativo é permitida apenas com linear
+# Detecta modo
 if eh_recursivo "$ALGO1" && eh_recursivo "$ALGO2"; then
-  # Dois recursivos — sempre linear
-  MODO="recursivo"
+  echo "Erro: nao e possivel comparar dois algoritmos recursivos."; exit 1
 elif eh_recursivo "$ALGO1" || eh_recursivo "$ALGO2"; then
-  # Mistura recursivo + iterativo — só Tarjan pode ser comparado com suas versões recursivas
   ITERATIVO=$(eh_recursivo "$ALGO1" && echo "$ALGO2" || echo "$ALGO1")
-  RECURSIVO=$(eh_recursivo "$ALGO1" && echo "$ALGO1" || echo "$ALGO2")
 
   if [[ "$ITERATIVO" != "tarjan" ]]; then
-    echo "Erro: apenas Tarjan pode ser comparado com suas versões recursivas."
-    echo "Use: tarjan tarjan-recursivo | tarjan tarjan-recursivo-hash"
+    echo "Erro: apenas Tarjan pode ser comparado com sua versao recursiva."
+    echo "Use: tarjan tarjan-recursivo"
     exit 1
   fi
 
-  if [[ "$RECURSIVO" != "tarjan-recursivo" && "$RECURSIVO" != "tarjan-recursivo-hash" ]]; then
-    echo "Erro: versao recursiva invalida '$RECURSIVO'."
-    echo "Use: tarjan-recursivo | tarjan-recursivo-hash"
-    exit 1
-  fi
-
-  # Linear é implícito para comparação iterativo vs recursivo
+  # Linear e implicito para comparacao iterativo vs recursivo
   MODO="linear"
   echo "Modo linear aplicado automaticamente para comparacao iterativo vs recursivo."
 
@@ -132,9 +115,6 @@ mkdir -p inputs resultados
 INPUT_FILES=()
 
 case $MODO in
-  recursivo)  echo "============================================="
-              echo " Benchmark: $ALGO1 vs $ALGO2 (linear)"
-              echo "=============================================" ;;
   linear)     echo "============================================="
               echo " Benchmark: $ALGO1 vs $ALGO2 (linear)"
               echo "=============================================" ;;
@@ -155,7 +135,7 @@ echo "[1/4] Verificando inputs..."
 
 for N in "${NS[@]}"; do
   case $MODO in
-    recursivo|linear)
+    linear)
       INPUT_FILE="inputs/linear_n${N}.txt"
       if [ ! -f "$INPUT_FILE" ]; then
         python3 scripts/generate_inputs/script_linear_graph.py "$N" > "$INPUT_FILE"
@@ -198,7 +178,7 @@ done
 
 echo ""
 echo "[2/4] Buildando imagem..."
-docker compose build
+docker compose -f docker/docker-compose.yml build
 echo "  build concluido."
 
 # -------------------------------------------------------------
@@ -216,7 +196,7 @@ for ALGO in "$ALGO1" "$ALGO2"; do
 
   ALGO_SAFE=$(echo "$ALGO" | tr '-' '_')
 
-  docker compose run --rm \
+  docker compose -f docker/docker-compose.yml run --rm \
     "$ALGO" \
     "$ALGO" "${INPUT_FILES[@]}" \
     | tee "resultados/log_${ALGO_SAFE}_${TIMESTAMP}.txt"
@@ -224,9 +204,9 @@ for ALGO in "$ALGO1" "$ALGO2"; do
   CSV_ORIGINAL="resultados/resultado_${ALGO}.csv"
 
   case $MODO in
-    recursivo|linear) CSV_PARCIAL="resultados/resultado_${ALGO_SAFE}_linear_${TIMESTAMP}.csv" ;;
-    cycle)            CSV_PARCIAL="resultados/resultado_${ALGO_SAFE}_cycle_${TIMESTAMP}.csv" ;;
-    controlado)       CSV_PARCIAL="resultados/resultado_${ALGO_SAFE}_${DENSIDADE}_${NIVEL_SCC}_${TIMESTAMP}.csv" ;;
+    linear)     CSV_PARCIAL="resultados/resultado_${ALGO_SAFE}_linear_${TIMESTAMP}.csv" ;;
+    cycle)      CSV_PARCIAL="resultados/resultado_${ALGO_SAFE}_cycle_${TIMESTAMP}.csv" ;;
+    controlado) CSV_PARCIAL="resultados/resultado_${ALGO_SAFE}_${DENSIDADE}_${NIVEL_SCC}_${TIMESTAMP}.csv" ;;
   esac
 
   if [ -f "$CSV_ORIGINAL" ]; then
@@ -248,7 +228,7 @@ ALGO1_SAFE=$(echo "$ALGO1" | tr '-' '_')
 ALGO2_SAFE=$(echo "$ALGO2" | tr '-' '_')
 
 case $MODO in
-  recursivo|linear)
+  linear)
     CSV1="resultados/resultado_${ALGO1_SAFE}_linear_${TIMESTAMP}.csv"
     CSV2="resultados/resultado_${ALGO2_SAFE}_linear_${TIMESTAMP}.csv"
     CSV_FINAL="resultados/comparacao_${ALGO1_SAFE}_vs_${ALGO2_SAFE}_linear_${TIMESTAMP}.csv"

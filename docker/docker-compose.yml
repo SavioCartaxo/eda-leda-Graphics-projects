@@ -1,0 +1,49 @@
+services:
+  tarjan:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java
+    container_name: bench_tarjan
+    volumes:
+      - ../inputs:/app/inputs
+      - ../resultados:/app/resultados
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+          cpus: "6.0"
+        reservations:
+          memory: 8g
+          cpus: "6.0"
+  kosaraju:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java
+    container_name: bench_kosaraju
+    volumes:
+      - ../inputs:/app/inputs
+      - ../resultados:/app/resultados
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+          cpus: "6.0"
+        reservations:
+          memory: 8g
+          cpus: "6.0"
+  tarjan-recursivo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java
+    container_name: bench_tarjan_recursivo
+    volumes:
+      - ../inputs:/app/inputs
+      - ../resultados:/app/resultados
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+          cpus: "6.0"
+        reservations:
+          memory: 8g
+          cpus: "6.0"

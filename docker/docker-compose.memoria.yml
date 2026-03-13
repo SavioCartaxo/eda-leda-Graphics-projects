@@ -3,7 +3,7 @@ services:
   memoria-tarjan:
     build:
       context: .
-      dockerfile: Dockerfile.memoria.java
+      dockerfile: docker/Dockerfile.memoria.java
     container_name: bench_memoria_tarjan
     volumes:
       - ./inputs:/app/inputs
@@ -15,11 +15,10 @@ services:
         reservations:
           memory: 8g
           cpus: "6.0"
-
   memoria-kosaraju:
     build:
       context: .
-      dockerfile: Dockerfile.memoria.java
+      dockerfile: docker/Dockerfile.memoria.java
     container_name: bench_memoria_kosaraju
     volumes:
       - ./inputs:/app/inputs

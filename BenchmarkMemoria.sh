@@ -39,7 +39,7 @@ echo "============================================="
 
 echo ""
 echo "[BUILD] Buildando imagem..."
-docker compose -f docker-compose.memoria.yml build
+docker compose -f docker/docker-compose.memoria.yml build
 echo "  build concluido."
 
 # -------------------------------------------------------------
@@ -70,7 +70,7 @@ for TIPO in "${TIPOS[@]}"; do
     INPUT_CONTAINER="/app/inputs/$(basename $INPUT_FILE)"
 
     for ALGO in "${ALGORITMOS[@]}"; do
-      MB=$(docker compose -f docker-compose.memoria.yml run --rm \
+      MB=$(docker compose -f docker/docker-compose.memoria.yml run --rm \
         "memoria-${ALGO}" \
         "$ALGO" "$INPUT_CONTAINER" \
         | grep "^MEMORIA_MB:" | awk -F: '{print $2}')
