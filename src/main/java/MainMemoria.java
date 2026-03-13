@@ -4,6 +4,9 @@ import algoritmos.Kosaraju;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+
 import java.util.Scanner;
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -11,7 +14,7 @@ import java.lang.management.MemoryMXBean;
 
 public class MainMemoria {
 
-    private static final java.util.Set<String> ALGORITMOS_VALIDOS = new java.util.HashSet<>(
+    private static final Set<String> ALGORITMOS_VALIDOS = new HashSet<>(
         java.util.Arrays.asList("tarjan", "kosaraju")
     );
 
@@ -81,5 +84,6 @@ public class MainMemoria {
 
         sc.close();
         return grafo;
+        
     }
 }

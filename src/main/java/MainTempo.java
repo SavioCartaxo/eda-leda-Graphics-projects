@@ -2,13 +2,26 @@ import algoritmos.Node;
 import algoritmos.Tarjan;
 import algoritmos.Kosaraju;
 import algoritmos.TarjanRecursivo;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+
 import java.util.Scanner;
+
 import java.io.File;
 import java.io.FileWriter;
 
+/**
+ * Ponto de entrada para benchmark de algoritmos de Componentes Fortemente Conexos (SCCs).
+ *
+ * Executa aquecimento de JIT ({@value #WARMUP} épocas descartadas) seguido de
+ * {@value #EPOCAS} épocas de medição, calculando a mediana dos tempos para eliminar
+ * outliers. Os resultados são gravados em CSV em {@code /app/resultados/}.
+ *
+ */
 public class MainTempo {
 
     // Épocas de aquecimento — rodam antes da medição para o JIT otimizar o bytecode
@@ -20,7 +33,7 @@ public class MainTempo {
     private static final int EPOCAS = 11;
 
     // Algoritmos válidos — usados na validação e no switch de execução
-    private static final java.util.Set<String> ALGORITMOS_VALIDOS = new java.util.HashSet<>(
+    private static final Set<String> ALGORITMOS_VALIDOS = new HashSet<>(
         java.util.Arrays.asList("tarjan", "kosaraju", "tarjan-recursivo")
     );
 
@@ -96,6 +109,7 @@ public class MainTempo {
         fw.close();
         System.out.println("\n===========================================");
         System.out.println("CSV salvo em: " + csvPath);
+
     }
 
     // Despacha para a implementação correta
@@ -157,4 +171,5 @@ public class MainTempo {
         } catch (Exception ignored) {}
         return -1;
     }
+
 }
