@@ -16,6 +16,8 @@
 
 - [Scripts](#scripts)
 
+- [Testes Unitários](#testes-unitários)
+
 - [Experimento](#experimento)
 
 - [Ambiente isolado com Docker](#uso-do-docker-no-projeto-de-benchmark-scc)
@@ -413,6 +415,25 @@ Sem dúvidas, uma questão importante do trabalho a ser respondida foi "Como ger
 Em mais detalhes, foi feito um script responsável por gerar grafos direcionados a partir de três parâmetros: N, M e K, representando o número de vértices, arestas e SCCs, respectivamente. Todos os vértices são distribuídos randomicamente em K grupos, e dentro de cada grupo os vértices são ligados de maneira a formar um ciclo, garantindo que cada grupo seja um SCC isolado, identificado por um número inteiro como ID. Para completar as M arestas restantes, são sorteados pares de vértices aleatoriamente, com a condição de que uma aresta só pode ir do grupo de ID menor para o de ID maior. Isso gera um Grafo Acíclico Dirigido entre os grupos, garantindo que nenhum SCC isolado seja desfeito.
 
 Para os experimentos, serão considerados valores de N = 10², 10³, 10⁴, 10⁵ e 10⁶. Os valores de M variam conforme a densidade do grafo: para grafos esparsos, M = 2N; para grafos moderadamente densos, M = 5N; para grafos densos, M = 10N. Os valores de K são definidos de forma a variar a quantidade de componentes, sendo K = N/30 para poucos SCCs, K = N/10 para uma quantidade moderada e K = N/3 para muitos SCCs pequenos.
+
+<br>
+
+---
+
+# Testes Unitários
+
+Para garantir a corretude dos algoritmos antes dos experimentos, foram desenvolvidos testes automatizados com **JUnit 5**, organizados em três classes de teste. 
+
+A classe [`TestControlledGraph`](src/test/java/testes/TestControlledGraph.java) valida Tarjan e Kosaraju em grafos aleatórios controlados com parâmetros definidos de vértices, arestas e SCCs. 
+
+A classe [`TestCyclicGraph`](src/test/java/testes/TestCyclicGraph.java) verifica se ambos os algoritmos retornam exatamente 1 SCC para grafos cíclicos, já que todos os vértices são mutuamente alcançáveis pelo ciclo. 
+
+A classe [`TestLinearGraph`](src/test/java/testes/TestLinearGraph.java) confirma que, em grafos lineares sem ciclos, cada vértice forma sua própria SCC, resultando em N componentes. Para executar os testes no terminal:
+```
+javac -cp "lib\junit-platform-console-standalone-1.9.3.jar;src" -d out (Get-ChildItem -Recurse src -Filter *.java).FullName
+java -jar lib\junit-platform-console-standalone-1.9.3.jar -cp out --scan-classpath
+```
+<br>
 
 ---
 
