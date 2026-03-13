@@ -2,15 +2,13 @@ package algoritmos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Algoritmo de Tarjan para Strongly Connected Components (SCCs).
- * Versão recursiva com HashMap para normalização dos índices.
+ * Versão recursiva com acesso direto via Node normalizado.
  * Complexidade: O(V + E)
  */
-public class TarjanRecursivoHashMap {
+public class TarjanRecursivo {
 
     private static final int UNVISITED = -1;
 
@@ -20,10 +18,9 @@ public class TarjanRecursivoHashMap {
     private int[] stack;        // pilha de nós do SCC atual
     private int stackTop;
 
-    private int id;             // contador global de descoberta
+    private int id;               // contador global de descoberta
+    private int[] originalValues; // índice → valor original do nó
     private ArrayList<Node>[] adj;          // cache das adjacências
-    private Map<Integer,Integer> nodeIndex; // valor do nó → índice 0..n-1
-    private int[] indexToValue;             // índice → valor original do nó
     private ArrayList<ArrayList<Integer>> out;
 
     /**
@@ -35,29 +32,24 @@ public class TarjanRecursivoHashMap {
     public ArrayList<ArrayList<Integer>> scc(ArrayList<Node> graph) {
         final int n = graph.size();
 
-        // Mapeia valores arbitrários dos nós para índices contíguos
-        nodeIndex = new HashMap<>(n * 2);
-        indexToValue = new int[n];
-        for (int i = 0; i < n; i++) {
-            int val = graph.get(i).getValue();
-            nodeIndex.put(val, i);
-            indexToValue[i] = val;
-        }
-
         ids = new int[n];
         low = new int[n];
         onStack = new boolean[n];
         stack = new int[n];
+        originalValues = new int[n];
         stackTop = 0;
         out = new ArrayList<>();
 
         Arrays.fill(ids, UNVISITED);
         id = 0;
 
-        // Cache das adjacências para evitar chamadas repetidas a getConnections()
+        // Cache das adjacências e valores originais
         @SuppressWarnings("unchecked")
         ArrayList<Node>[] adjLocal = new ArrayList[n];
-        for (int i = 0; i < n; i++) adjLocal[i] = graph.get(i).getConnections();
+        for (int i = 0; i < n; i++) {
+            adjLocal[i] = graph.get(i).getConnections();
+            originalValues[i] = graph.get(i).getValue();
+        }
         adj = adjLocal;
 
         // Garante que todos os nós sejam visitados, mesmo em grafos desconexos
@@ -81,9 +73,7 @@ public class TarjanRecursivoHashMap {
         onStack[u] = true;
 
         for (Node vNode : adj[u]) {
-            Integer vBoxed = nodeIndex.get(vNode.getValue());
-            if (vBoxed == null) continue; // vizinho fora do grafo
-            int v = vBoxed;
+            int v = vNode.getIdNormalizado(); // índice direto, sem mapa
 
             if (ids[v] == UNVISITED) {
                 // Tree-edge: desce na DFS e propaga o low de volta
@@ -102,7 +92,7 @@ public class TarjanRecursivoHashMap {
                 int node = stack[--stackTop];
                 onStack[node] = false;
                 low[node] = ids[u]; // todos do SCC apontam para a mesma raiz
-                component.add(indexToValue[node]);
+                component.add(originalValues[node]);
                 if (node == u) break;
             }
             out.add(component);
