@@ -92,4 +92,46 @@ public class TestControlledGraph {
             assertEquals(expected, sccKosaraju);
         }
     }
+
+    @Test
+    public void testRandomGraphs1() throws Exception {
+        int expected = 1;
+        ArrayList<Node> grafo = GraphGenerator.generateGraph(50, 200, expected);
+
+        ArrayList<Node> grafoTarjan   = new ArrayList<>(grafo);
+        ArrayList<Node> grafoKosaraju = new ArrayList<>(grafo);
+
+        assertEquals(expected, new Tarjan().findSCCs(grafoTarjan).size());
+        assertEquals(expected, new Kosaraju().findSCCs(grafoKosaraju).size());
+    }
+
+    @Test
+    public void testRandomGraphs2() throws Exception {
+        int n = 50;
+        int expected = n;
+        ArrayList<Node> grafo = GraphGenerator.generateGraph(n, 200, expected);
+
+        ArrayList<Node> grafoTarjan   = new ArrayList<>(grafo);
+        ArrayList<Node> grafoKosaraju   = new ArrayList<>(grafo);
+
+        assertEquals(expected, new Kosaraju().findSCCs(grafoKosaraju).size());
+        assertEquals(expected, new Tarjan().findSCCs(grafoTarjan).size());
+    }
+
+    @Test
+    public void testRandomGraphs3() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            int expected = 10;
+
+            ArrayList<Node> grafo = GraphGenerator.generateGraph(50, 200, expected);
+
+            ArrayList<Node> grafoTarjan   = new ArrayList<>(grafo);
+            ArrayList<Node> grafoKosaraju   = new ArrayList<>(grafo);
+
+            int sccKosaraju = new Kosaraju().findSCCs(grafoKosaraju).size();
+            int sccTarjan   = new Tarjan().findSCCs(grafoTarjan).size();
+            assertEquals(sccTarjan, sccKosaraju);
+        }
+    }
+
 }
