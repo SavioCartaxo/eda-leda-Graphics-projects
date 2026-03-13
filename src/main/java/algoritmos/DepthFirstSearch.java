@@ -1,6 +1,16 @@
 package algoritmos;
 import java.util.*;
 
+/**
+ * Implementação do algoritmo de Busca em Profundidade (DFS) para grafos.
+ * 
+ * A classe fornece duas versões da busca: iterativa, usando uma pilha,
+ * e recursiva, usando a pilha de chamadas da linguagem. O algoritmo
+ * percorre o grafo a partir de um nó inicial visitando seus vizinhos
+ * e marcando os nós já visitados.
+ *
+ * Complexidade: O(V + E), onde V é o número de vértices e E o número de arestas.
+ */
 public class DepthFirstSearch {
 
 	public DepthFirstSearch(){}
@@ -45,7 +55,6 @@ public class DepthFirstSearch {
 			}
 		}
 	} 
-
 	
 	/**
     * Classe que representa um nó do grafo.
@@ -55,7 +64,6 @@ public class DepthFirstSearch {
 		private int value;
 		private boolean visited;
 		private List<Node> neighbors;
-		
 
 		/**
 		 * Cria um novo nó com o valor especificado.

@@ -2,7 +2,6 @@ package algoritmos;
 
 import java.util.Deque;
 import java.util.ArrayDeque;
-import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -40,8 +39,7 @@ public class Kosaraju {
 		// Parte 1: DFS no grafo original
 		for (Node no : grafo) {
 			if (!visitados[no.getIdNormalizado()]) {
-				recursiveDfs1(no, pilha, visitados);
-				//dfs1(no, pilha, visitados);
+				dfs1(no, pilha, visitados);
 			}
 		}
 
@@ -67,8 +65,7 @@ public class Kosaraju {
 
 			if (!visitados2[node.getIdNormalizado()]) {
 				ArrayList<Integer> scc = new ArrayList<>();
-				recursiveDfs2(node, grafoInvertido, visitados2, scc);
-				//dfs2(node, grafoInvertido, visitados2, scc);
+				dfs2(node, grafoInvertido, visitados2, scc);
 				SCCs.add(scc);
 			}
 		}
@@ -81,87 +78,35 @@ public class Kosaraju {
 	 * DFS iterativa do grafo original para preencher a pilha
 	 * de acordo com o tempo de término.
 	 *
-	 * @param node     nó de início da DFS
-	 * @param pilha    pilha de ordem de saída dos vértices
+	 * @param node nó de início da DFS
+	 * @param pilha pilha de ordem de saída dos vértices
 	 * @param visitados array booleano de vértices já visitados
 	 */
 	private void dfs1(Node node, Deque<Node> pilha, boolean[] visitados) {
-		Deque<Node> pilhaAuxiliar = new ArrayDeque<>();
-		Deque<Node> ordem = new ArrayDeque<>();
-		pilhaAuxiliar.addLast(node);
-
-		while (!pilhaAuxiliar.isEmpty()) {
-			Node atual = pilhaAuxiliar.removeLast();
-			if (!visitados[atual.getIdNormalizado()]) {
-				visitados[atual.getIdNormalizado()] = true;
-				ordem.addLast(atual);
-
-				for (Node vizinho : atual.getConnections()) {
-					if (!visitados[vizinho.getIdNormalizado()]) {
-						pilhaAuxiliar.addLast(vizinho);
-					}
-				}
-			}
-		}
-		
-		while (!ordem.isEmpty()) {
-			pilha.addLast(ordem.removeLast());
-		}
-	}
-
-	/**
-	 * DFS iterativa no grafo transposto para visitar todos
-	 * os nós de uma mesma SCC.
-	 *
-	 * @param node           nó de início da DFS
-	 * @param grafoInvertido grafo transposto em lista de adjacência
-	 * @param visitados      array booleano de vértices já visitados
-	 * @param scc            lista que acumula os vértices do componente atual
-	 */
-	private void dfs2(Node node, ArrayList<ArrayList<Node>> grafoInvertido, boolean[] visitados, ArrayList<Integer> scc) {
-		Deque<Node> pilhaAuxiliar = new ArrayDeque<>();
-
-		pilhaAuxiliar.addLast(node);
-
-		while (!pilhaAuxiliar.isEmpty()) {
-			Node atual = pilhaAuxiliar.removeLast();
-			if (!visitados[atual.getIdNormalizado()]) {
-				visitados[atual.getIdNormalizado()] = true;
-				scc.add(atual.getValue());
-				
-				for (Node vizinho : grafoInvertido.get(atual.getIdNormalizado())) {
-					if (!visitados[vizinho.getIdNormalizado()]) {
-						pilhaAuxiliar.addLast(vizinho);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * DFS Recursiva do grafo original para preencher a pilha
-	 * e acordo com o tempo de término.
-	 */
-	private void recursiveDfs1(Node node, Deque<Node> pilha, boolean[] visitados) {
 		visitados[node.getIdNormalizado()] = true;
 		for (Node vizinho : node.getConnections()) {
 			if (!visitados[vizinho.getIdNormalizado()]) {
-				recursiveDfs1(vizinho, pilha, visitados);
+				dfs1(vizinho, pilha, visitados);
 			}
 		}
 		pilha.addLast(node);
 	}
 
 	/**
-	 * DFS recursiva no grafo transposto para visitar todos
-     * os nós de uma mesma SCC.
+	 * DFS iterativa no grafo transposto para visitar todos
+	 * os nós de uma mesma SCC.
+	 *
+	 * @param node nó de início da DFS
+	 * @param grafoInvertido grafo transposto em lista de adjacência
+	 * @param visitados array booleano de vértices já visitados
+	 * @param scc lista que acumula os vértices do componente atual
 	 */
-	private void recursiveDfs2(Node node, ArrayList<ArrayList<Node>> grafoInvertido, boolean[] visitados, ArrayList<Integer> scc) {
+	private void dfs2(Node node, ArrayList<ArrayList<Node>> grafoInvertido, boolean[] visitados, ArrayList<Integer> scc) {
 		visitados[node.getIdNormalizado()] = true;
 		scc.add(node.getValue());
 		for (Node vizinho : grafoInvertido.get(node.getIdNormalizado())) {
 			if (!visitados[vizinho.getIdNormalizado()]) {
-				recursiveDfs2(vizinho, grafoInvertido, visitados, scc);
+				dfs2(vizinho, grafoInvertido, visitados, scc);
 			}
 		}
 	}

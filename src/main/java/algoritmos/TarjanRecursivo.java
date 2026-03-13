@@ -4,23 +4,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Algoritmo de Tarjan para Strongly Connected Components (SCCs).
+ * Implementação recursiva do algoritmo de Tarjan para encontrar
+ * Strongly Connected Components (SCCs) em um grafo dirigido
+ *
  * Versão recursiva com acesso direto via Node normalizado.
- * Complexidade: O(V + E)
+ *
+ * Complexidade: O(V + E), onde V é o número de vértices e
+ * E é o número de arestas.
  */
 public class TarjanRecursivo {
 
     private static final int UNVISITED = -1;
 
-    private int[] ids;          // ordem de descoberta de cada nó
-    private int[] low;          // menor id acessível a partir de cada nó
-    private boolean[] onStack;  // indica se o nó está atualmente na pilha
-    private int[] stack;        // pilha de nós do SCC atual
+    private int[] ids; // ordem de descoberta de cada nó
+    private int[] low; // menor id acessível a partir de cada nó
+    private boolean[] onStack; // indica se o nó está atualmente na pilha
+    private int[] stack; // pilha de nós do SCC atual
     private int stackTop;
 
-    private int id;               // contador global de descoberta
+    private int id; // contador global de descoberta
     private int[] originalValues; // índice → valor original do nó
-    private ArrayList<Node>[] adj;          // cache das adjacências
+    private ArrayList<Node>[] adj; // cache das adjacências
     private ArrayList<ArrayList<Integer>> out;
 
     /**
@@ -67,6 +71,7 @@ public class TarjanRecursivo {
      * @param u índice normalizado do vértice a ser visitado
      */
     private void dfs(int u) {
+        
         // Inicializa o nó com o id atual e empilha
         ids[u] = low[u] = id++;
         stack[stackTop++] = u;

@@ -106,6 +106,7 @@ public class Tarjan {
         }
 
         return componentes;
+        
     }
 
     /**
