@@ -24,6 +24,7 @@ import util.InputFormatter;
 */
 public class TarjanTest {
     public static void main(String[] args) {
+
         Scanner sc = new Scanner(System.in);
 
         ArrayList<Node> grafo = InputFormatter.format(sc);
@@ -33,8 +34,12 @@ public class TarjanTest {
         int count = tj.findSCCs(grafo).size();
         long endTime = System.currentTimeMillis();   // tempo final
 
+        //Se queira exibir todos os grupos de SCCs
+        //System.out.println(SCCs);
+
         System.out.println("Quantidade de SCC's: " + count);
         System.out.println("Tempo de execução: " + (endTime - startTime) + " ms");
 
+        sc.close();
     }
 }

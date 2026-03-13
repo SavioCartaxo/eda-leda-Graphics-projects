@@ -60,7 +60,7 @@ def benchmark(caminho_csv: str, tipo: str, path_saida: str = "resultados") -> No
 
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{int(v):,}".replace(",", ".")))
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{int(v)}"))
-    
+
     ax.legend(facecolor="#1a1a2e", edgecolor="#333355", labelcolor="white")
     plt.tight_layout()
 
@@ -77,4 +77,4 @@ if __name__ == "__main__":
     )
 
 # Para rodar pelo terminal:
-# python scripts/benchmark.sh "Nome_CSV" "Legenda_de_tipo" "pasta_saida"
+# python scripts/grafico_1.sh "Nome_CSV" "Legenda_de_tipo" "pasta_saida"

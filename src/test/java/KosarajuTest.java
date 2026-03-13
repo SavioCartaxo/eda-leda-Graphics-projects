@@ -5,7 +5,6 @@ import algoritmos.Kosaraju;
 import algoritmos.Node;
 import util.InputFormatter;
 
-
 /*
  Para testar o algoritmo, execute os seguintes comandos na raiz do projeto:
 
@@ -25,6 +24,7 @@ import util.InputFormatter;
 */
 public class KosarajuTest {
     public static void main(String[] args) {
+
         Scanner sc = new Scanner(System.in);
 
         ArrayList<Node> grafo = InputFormatter.format(sc);
@@ -37,7 +37,12 @@ public class KosarajuTest {
 
         System.out.println("SCC's: " + SCCs);
         System.out.println("Quantidade de SCC's: " + SCCs.size());
+
+        //Se queira exibir todos os grupos de SCCs
+        //System.out.println(SCCs);
+
         System.out.println("Tempo de execução: " + (endTime - startTime) + " ms");
         
+        sc.close();
     }
 }

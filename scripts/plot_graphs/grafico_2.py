@@ -51,7 +51,7 @@ def benchmark(df, tipo: str, path_saida: str = "resultados") -> None:
 
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{int(v):,}".replace(",", ".")))
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{int(v)}"))
-    
+
     ax.legend(facecolor="#1a1a2e", edgecolor="#333355", labelcolor="white")
     plt.tight_layout()
 
@@ -67,3 +67,6 @@ if __name__ == "__main__":
         tipo=sys.argv[2],
         path_saida=sys.argv[3] if len(sys.argv) > 3 else "resultados"
     )
+
+# Para rodar pelo terminal:
+# python scripts/grafico_2.py "Nome_CSV" "Legenda_de_tipo" "pasta_saida"
