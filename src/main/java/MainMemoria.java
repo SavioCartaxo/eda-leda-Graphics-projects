@@ -1,6 +1,6 @@
-import main.java.algoritmos.Node;
-import main.java.algoritmos.Tarjan;
-import main.java.algoritmos.Kosaraju;
+import algoritmos.Node;
+import algoritmos.Tarjan;
+import algoritmos.Kosaraju;
 
 import java.util.ArrayList;
 import java.util.HashMap;
