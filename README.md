@@ -114,7 +114,7 @@ Na figura 2.0, que se trata de um grafo direcionado, tomando o vértice A como o
 
 Em um grafo dirigido G, diz-se que ele é fortemente conectado quando, para todo par de vértices u e v, existe um caminho de u até v e, ao mesmo tempo, um caminho de v até u. Em outras palavras, qualquer vértice pode ser alcançado a partir de qualquer outro.
 
-No entanto, um grafo dirigido pode não ser fortemente conectado como um todo. Nesse caso, a forte conectividade pode ocorrer em apenas partes do grafo. Dizemos que dois vértices u e v são fortemente conectados entre si quando existe um caminho de u até v e outro de v até u, mesmo que u = v. Assim, mesmo que G não seja fortemente conectado, ele pode ser decomposto em subconjuntos de vértices nos quais, internamente, todo par u e v é mutuamente alcançável. Cada um desses subconjuntos induz um subgrafo chamado **Componente Fortemente Conectado (CFC)**. Essa ideia é melhor compreendida ao observar o exemplo:
+No entanto, um grafo dirigido pode não ser fortemente conectado como um todo. Nesse caso, a forte conectividade pode ocorrer em apenas partes do grafo. Dizemos que dois vértices u e v são fortemente conectados entre si quando existe um caminho de u até v e outro de v até u, mesmo que u = v. Assim, mesmo que G não seja fortemente conectado, ele pode ser decomposto em subconjuntos de vértices nos quais, internamente, todo par u e v é mutuamente alcançável. Cada um desses subconjuntos induz um subgrafo chamado **Componente Fortemente Conectado (CFC)** ou *Strongly Connected Components* (SCC) que será como iremos chamá-los. Essa ideia é melhor compreendida ao observar o exemplo:
 
 ![Exemplo de SCC](README_IMAGES/img_example_SCC.png)
 
@@ -132,7 +132,7 @@ Vamos usar o grafo direcionado abaixo como exemplo para executar o algoritmo de 
 
 ![Grafo original](README_IMAGES/grafo_imagem1.png)
 
-## Execução do Algortimo
+## Execução do Algoritmo
 ### Primeira Etapa
 
 Qual o nosso objetivo inicial? Primeiro, devemos criar uma pilha que representa a ordem de saída dos vértices através de uma busca em profundidade e guardar os vértices já visitados. A versão da DFS usada para a explicação do algoritmo será a recursiva, pois ela é mais intuitiva e simples de entender. A DFS faz chamadas recursivas para cada vizinho não visitado, e ao retornar de todas essas chamadas, ou seja, quando não há mais vizinhos a explorar o vértice é adicionado à pilha.
@@ -159,8 +159,6 @@ visitados = {1, 2, 3, 4, 5, 6, 9}
 ```
 
 ### Segunda Etapa
-
-Agora, o próximo passo é inverter a direção de todas as arestas do grafo, a fim de encontrar o seu transposto. Para cada vértice u do grafo, percorremos seus vizinhos v e adicionamos u como vizinho de v no grafo transposto, ou seja, toda aresta u → v vira v → u. O processo é feito em O(V + E), visitando cada vértice e cada aresta exatamente uma vez.
 
 Agora, o próximo passo é inverter a direção de todas as arestas do grafo, a fim de encontrar o seu transposto. Para cada vértice u do grafo, percorremos seus vizinhos v e adicionamos u como vizinho de v no grafo transposto, ou seja, toda aresta u → v vira v → u. O processo é feito em O(V + E), visitando cada vértice e cada aresta exatamente uma vez.
 
@@ -223,11 +221,11 @@ Ao explorar uma aresta u → v, existem dois casos. Se v ainda não foi visitado
 
 ### Uso da Pilha
 
-O Tarjan utiliza uma pilha para manter um invariante importante: apenas vértices cujo componente ainda não foi finalizada podem influenciar cálculos de low-link. Quando um vértice é visitado, ele é colocado na pilha e permanece lá enquanto sua SCC ainda está sendo construída. Quando uma componente é descoberta, todos os seus vértices são removidos da pilha. Assim, apenas vértices presentes na pilha podem atualizar valores low, impedindo que SCCs já concluídas interfiram nas próximas.
+O Tarjan utiliza uma pilha para manter um invariante importante: apenas vértices cujo componente ainda não foi finalizada podem influenciar cálculos de low-link. Quando um vértice é visitado, ele é colocado na pilha e permanece lá enquanto seu SCC ainda está sendo construída. Quando um componente é descoberta, todos os seus vértices são removidos da pilha. Assim, apenas vértices presentes na pilha podem atualizar valores low, impedindo que SCCs já concluídas interfiram nas próximas.
 
 ### Detecção de uma SCC
 
-Após explorar todos os vizinhos de um vértice u, verificamos a condição id[u] == low[u]. Se ela for verdadeira, significa que não existe caminho retornando para um vértice mais antigo na DFS; logo, u é o início de uma componente fortemente conectada. Nesse momento, removemos vértices da pilha até remover u; todos os vértices removidos formam exatamente uma SCC. Uma SCC é definida como um conjunto de vértices onde qualquer vértice alcança qualquer outro e existe caminho de ida e volta entre todos eles, sendo que cada vértice do grafo pertence exatamente a uma única SCC.
+Após explorar todos os vizinhos de um vértice u, verificamos a condição id[u] == low[u]. Se ela for verdadeira, significa que não existe caminho retornando para um vértice mais antigo na DFS; logo, u é o início de um componente fortemente conectada. Nesse momento, removemos vértices da pilha até remover u; todos os vértices removidos formam exatamente uma SCC. Uma SCC é definida como um conjunto de vértices onde qualquer vértice alcança qualquer outro e existe caminho de ida e volta entre todos eles, sendo que cada vértice do grafo pertence exatamente a uma única SCC.
 
 ### Fluxo Geral do Algoritmo
 
@@ -397,12 +395,12 @@ Isolamento de recursos, reprodutibilidade entre máquinas e condições idêntic
 
 ## Resultados de tempo para grafos aleatórios controlados
 
-Para os experimentos com grafos aleatórios controlados, foram consideradas combinações entre três níveis de densidade: baixa (M = 2N), média (M = 5N) e alta (M = 10N); e três categorias de quantidade de SCCs: poucos (K = 3), moderada (K = N/10) e muitos (K = N/3).
+Para os experimentos com grafos aleatórios controlados, foram consideradas combinações entre três níveis de densidade: baixa (M = 2N), média (M = 5N) e alta (M = 10N); e três categorias de quantidade de SCCs: muitos (K = N/3), moderada (K = N/10) e poucos (K = N/30).
 
 <p align="center">
   <img src="README_IMAGES/tarjan_kosaraju_baixa_pouco.png">
   <br>
-  <em>Grafo com baixa densidade (M = 2N) e poucos SCCs (K = 3).</em>
+  <em>Grafo com baixa densidade (M = 2N) e poucos SCCs (K = N/30).</em>
 </p>
 
 
@@ -423,7 +421,7 @@ Para os experimentos com grafos aleatórios controlados, foram consideradas comb
 <p align="center">
   <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_media_poucos.png">
   <br>
-  <em>Grafo com densidade média (M = 5N) e poucos SCCs (K = 3).</em>
+  <em>Grafo com densidade média (M = 5N) e poucos SCCs (K = N/30).</em>
 </p>
 
 
@@ -444,7 +442,7 @@ Para os experimentos com grafos aleatórios controlados, foram consideradas comb
 <p align="center">
   <img src="README_IMAGES/comparacao_tarjan_vs_kosaraju_alta_poucos.png">
   <br>
-  <em>Grafo com alta densidade (M = 10N) e poucos SCCs (K = 3).</em>
+  <em>Grafo com alta densidade (M = 10N) e poucos SCCs (K = N/30).</em>
 </p>
 
 
