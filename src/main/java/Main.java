@@ -1,9 +1,8 @@
-package main.java;
+import algoritmos.Node;
+import algoritmos.Tarjan;
+import algoritmos.Kosaraju;
+import algoritmos.TarjanRecursivo;
 
-import main.java.algoritmos.Node;
-import main.java.algoritmos.Tarjan;
-import main.java.algoritmos.Kosaraju;
-import main.java.algoritmos.TarjanRecursivo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

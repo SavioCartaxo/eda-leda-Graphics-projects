@@ -1,4 +1,4 @@
-package main.java.algoritmos;
+package algoritmos;
 
 import java.util.ArrayList;
 import java.util.Arrays;

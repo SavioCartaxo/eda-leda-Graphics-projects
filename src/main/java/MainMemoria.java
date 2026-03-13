@@ -1,8 +1,7 @@
-package main.java;
-
 import main.java.algoritmos.Node;
 import main.java.algoritmos.Tarjan;
 import main.java.algoritmos.Kosaraju;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
