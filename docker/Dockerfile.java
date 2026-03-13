@@ -3,4 +3,4 @@ WORKDIR /app
 COPY src/ src/
 COPY pom.xml .
 RUN mvn package -Dmaven.test.skip=true
-ENTRYPOINT ["java", "-Xss512m", "-cp", "target/classes", "Main"]
+ENTRYPOINT ["java", "-Xss512m", "-cp", "target/classes", "MainTempo"]

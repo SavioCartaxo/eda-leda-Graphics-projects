@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
 
-public class Main {
+public class MainTempo {
 
     // Épocas de aquecimento — rodam antes da medição para o JIT otimizar o bytecode
     // Não são contabilizadas no resultado
