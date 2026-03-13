@@ -1,8 +1,9 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import main.java.algoritmos.Kosaraju;
-import main.java.algoritmos.Node;
+import algoritmos.Kosaraju;
+import algoritmos.Node;
+import util.InputFormatter;
 
 
 /*

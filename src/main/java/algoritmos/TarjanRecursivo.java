@@ -23,6 +23,12 @@ public class TarjanRecursivo {
     private ArrayList<Node>[] adj;          // cache das adjacências
     private ArrayList<ArrayList<Integer>> out;
 
+    /**
+     * Executa o algoritmo de Tarjan em um grafo direcionado.
+     *
+     * @param graph lista de nós representando o grafo (lista de adjacência)
+     * @return os Componentes Fortemente Conectados (SCCs)
+     */
     public ArrayList<ArrayList<Integer>> scc(ArrayList<Node> graph) {
         final int n = graph.size();
 
@@ -54,6 +60,12 @@ public class TarjanRecursivo {
         return out;
     }
 
+    /**
+     * DFS recursiva para calcular ids e low-link values.
+     * Quando ids[u] == low[u], u é raiz de um SCC.
+     *
+     * @param u índice normalizado do vértice a ser visitado
+     */
     private void dfs(int u) {
         // Inicializa o nó com o id atual e empilha
         ids[u] = low[u] = id++;

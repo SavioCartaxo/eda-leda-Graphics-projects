@@ -40,7 +40,8 @@ public class Kosaraju {
 		// Parte 1: DFS no grafo original
 		for (Node no : grafo) {
 			if (!visitados[no.getIdNormalizado()]) {
-				dfs1(no, pilha, visitados);
+				recursiveDfs1(no, pilha, visitados);
+				//dfs1(no, pilha, visitados);
 			}
 		}
 
@@ -66,7 +67,8 @@ public class Kosaraju {
 
 			if (!visitados2[node.getIdNormalizado()]) {
 				ArrayList<Integer> scc = new ArrayList<>();
-				dfs2(node, grafoInvertido, visitados2, scc);
+				recursiveDfs2(node, grafoInvertido, visitados2, scc);
+				//dfs2(node, grafoInvertido, visitados2, scc);
 				SCCs.add(scc);
 			}
 		}
@@ -76,9 +78,13 @@ public class Kosaraju {
 	}
 
 	/**
-     * DFS do grafo original para preencher a pilha
-     * de acordo com o tempo de término.
-     */
+	 * DFS iterativa do grafo original para preencher a pilha
+	 * de acordo com o tempo de término.
+	 *
+	 * @param node     nó de início da DFS
+	 * @param pilha    pilha de ordem de saída dos vértices
+	 * @param visitados array booleano de vértices já visitados
+	 */
 	private void dfs1(Node node, Deque<Node> pilha, boolean[] visitados) {
 		Deque<Node> pilhaAuxiliar = new ArrayDeque<>();
 		Deque<Node> ordem = new ArrayDeque<>();
@@ -104,9 +110,14 @@ public class Kosaraju {
 	}
 
 	/**
-     * DFS no grafo transposto para visitar todos
-     * os nós de uma mesma SCC.
-     */
+	 * DFS iterativa no grafo transposto para visitar todos
+	 * os nós de uma mesma SCC.
+	 *
+	 * @param node           nó de início da DFS
+	 * @param grafoInvertido grafo transposto em lista de adjacência
+	 * @param visitados      array booleano de vértices já visitados
+	 * @param scc            lista que acumula os vértices do componente atual
+	 */
 	private void dfs2(Node node, ArrayList<ArrayList<Node>> grafoInvertido, boolean[] visitados, ArrayList<Integer> scc) {
 		Deque<Node> pilhaAuxiliar = new ArrayDeque<>();
 

@@ -1,8 +1,9 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import main.java.algoritmos.Node;
-import main.java.algoritmos.Tarjan;
+import algoritmos.Node;
+import algoritmos.Tarjan;
+import util.InputFormatter;
 
 /*
  Para testar o algoritmo, execute os seguintes comandos na raiz do projeto:
